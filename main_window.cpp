@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget* parent) :
 
     // Link widgets actions
     connect(_ui->nodeAppendButton, SIGNAL(clicked()), this, SLOT(AppendNodeRow()));
+    connect(_ui->nodeRemoveButton, SIGNAL(clicked()), this, SLOT(RemoveNodeRow()));
 }
 
 MainWindow::~MainWindow()
@@ -28,7 +29,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::AppendNodeRow()
 {
-    _skillNodesHandler->AppendNodeInfo();
+    _skillNodesHandler->AppendNodeRow();
+}
+
+void MainWindow::RemoveNodeRow()
+{
+    QModelIndexList indexList = _ui->skillNodesTableView->selectionModel()->selectedIndexes();
+    // Multiple rows can be selected
+    for(int32_t i = 0; i < indexList.count(); ++i)
+    {
+        QModelIndex index = indexList.at(i);
+        _skillNodesHandler->RemoveNodeRow(index.row());
+    }
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

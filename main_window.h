@@ -20,6 +20,9 @@ private slots:
     //! \brief When Append button is clicked
     void AppendNodeRow();
 
+    //! \brief When Remove button is clicked
+    void RemoveNodeRow();
+
     //! \brief When main window is resized
     void resizeEvent(QResizeEvent* event) override;
 

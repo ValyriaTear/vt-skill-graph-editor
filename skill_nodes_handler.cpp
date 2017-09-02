@@ -29,7 +29,16 @@ void SkillNodesHandler::SetupSkillNodesTableView(QTableView* tableView)
     tableView->show();
 }
 
-void SkillNodesHandler::AppendNodeInfo()
+void SkillNodesHandler::AppendNodeRow()
 {
     _model->appendRow(nullptr);
+}
+
+void SkillNodesHandler::RemoveNodeRow(uint32_t row_id)
+{
+    if (static_cast<int>(row_id) >= _model->rowCount()) {
+        qWarning("Invalid row id %u", row_id);
+        return;
+    }
+    _model->removeRow(row_id);
 }

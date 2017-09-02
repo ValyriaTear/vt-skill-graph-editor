@@ -91,7 +91,10 @@ public:
     //! \brief Decorator for the table view
     void SetupSkillNodesTableView(QTableView* tableView);
 
-    void AppendNodeInfo();
+    //! \brief Append an empty node row
+    void AppendNodeRow();
+    //! \brief Remove the node row at the given index
+    void RemoveNodeRow(uint32_t row_id);
 private:
     //! \brief Data model which contains the actual data
     QStandardItemModel* _model;
