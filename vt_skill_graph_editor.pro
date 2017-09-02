@@ -1,8 +1,11 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2017-09-01T23:01:47
-#
-#-------------------------------------------------
+#///////////////////////////////////////////////////////////////////////////////
+#//            Copyright (C) 2017 by Bertram (Valyria Tear)
+#//                         All Rights Reserved
+#//
+#// This code is licensed under the GNU GPL version 3. It is free software
+#// and you may modify it and/or redistribute it under the terms of this license.
+#// See http://www.gnu.org/copyleft/gpl.html for details.
+#///////////////////////////////////////////////////////////////////////////////
 
 QT       += core gui
 
@@ -26,11 +29,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     skill_nodes_handler.cpp \
-    main_window.cpp
+    main_window.cpp \
+    graph_view_handler.cpp
 
 HEADERS += \
     skill_nodes_handler.h \
-    main_window.h
+    main_window.h \
+    graph_view_handler.h
 
 FORMS += \
     main_window.ui

@@ -7,14 +7,22 @@
 // See http://www.gnu.org/copyleft/gpl.html for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "main_window.h"
-#include <QApplication>
+#ifndef GRAPH_VIEW_HANDLER_H
+#define GRAPH_VIEW_HANDLER_H
 
-int main(int argc, char *argv[])
+class QGraphicsView;
+
+//! \brief Handler of all skill graph view painting operations.
+class GraphViewHandler
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+public:
+    GraphViewHandler(QGraphicsView* view);
 
-    return a.exec();
-}
+    void Repaint();
+
+private:
+    //! \brief The graphic view
+    QGraphicsView* _view;
+};
+
+#endif // GRAPH_VIEW_HANDLER_H

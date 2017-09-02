@@ -20,7 +20,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGraphicsView" name="skillGraphGraphicsView">
+   <widget class="QGraphicsView" name="skill_graph_graphics_view">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -36,7 +36,7 @@
      </sizepolicy>
     </property>
    </widget>
-   <widget class="QTableView" name="skillNodesTableView">
+   <widget class="QTableView" name="skill_nodes_table_view">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -55,7 +55,7 @@
      </sizepolicy>
     </property>
    </widget>
-   <widget class="QPushButton" name="nodeAppendButton">
+   <widget class="QPushButton" name="node_append_button">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -68,7 +68,7 @@
      <string>+</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="nodeRemoveButton">
+   <widget class="QPushButton" name="node_remove_button">
     <property name="geometry">
      <rect>
       <x>440</x>
@@ -82,7 +82,7 @@
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QMenuBar" name="menu_bar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -92,7 +92,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="main_tool_bar">
    <property name="windowTitle">
     <string>Skill Graph Editor</string>
    </property>
@@ -103,7 +103,7 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="status_bar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

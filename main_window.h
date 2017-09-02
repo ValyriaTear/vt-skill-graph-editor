@@ -1,3 +1,12 @@
+///////////////////////////////////////////////////////////////////////////////
+//            Copyright (C) 2017 by Bertram (Valyria Tear)
+//                         All Rights Reserved
+//
+// This code is licensed under the GNU GPL version 3. It is free software
+// and you may modify it and/or redistribute it under the terms of this license.
+// See http://www.gnu.org/copyleft/gpl.html for details.
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -7,7 +16,9 @@ namespace Ui {
 class MainWindow;
 }
 class SkillNodesHandler;
+class GraphViewHandler;
 
+//! \brief Main app window
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -30,8 +41,11 @@ private:
     //! \brief Main Window UI pointer.
     Ui::MainWindow* _ui;
 
-    // Skill node handler
-    SkillNodesHandler* _skillNodesHandler;
+    //! \brief Skill node handler
+    SkillNodesHandler* _skill_nodes_handler;
+
+    //! \brief Graph view handler
+    GraphViewHandler* _graph_view_handler;
 };
 
 #endif // MAINWINDOW_H
