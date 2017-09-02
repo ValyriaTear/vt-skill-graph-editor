@@ -27,18 +27,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-    skill_nodes_handler.cpp \
-    main_window.cpp \
-    graph_view_handler.cpp
+        src/main.cpp \
+    src/skill_nodes_handler.cpp \
+    src/main_window.cpp \
+    src/graph_view_handler.cpp
 
 HEADERS += \
-    skill_nodes_handler.h \
-    main_window.h \
-    graph_view_handler.h
+    src/skill_nodes_handler.h \
+    src/main_window.h \
+    src/graph_view_handler.h
 
 FORMS += \
-    main_window.ui
+    src/main_window.ui
 
 DISTFILES += \
     COPYRIGHT \
