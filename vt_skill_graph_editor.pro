@@ -39,3 +39,7 @@ HEADERS += \
 
 FORMS += \
     main_window.ui
+
+DISTFILES += \
+    COPYRIGHT \
+    README.md
