@@ -17,7 +17,9 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
-    _ui(new Ui::MainWindow)
+    _ui(new Ui::MainWindow),
+    _skill_nodes_handler(nullptr),
+    _graph_view_handler(nullptr)
 {
     // Build ui from ui file
     _ui->setupUi(this);
@@ -35,6 +37,8 @@ MainWindow::~MainWindow()
 {
     // delete the ui instance
     delete _ui;
+    delete _skill_nodes_handler;
+    delete _graph_view_handler;
 }
 
 void MainWindow::AppendNodeRow()

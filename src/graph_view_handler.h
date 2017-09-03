@@ -17,6 +17,7 @@ class GraphViewHandler
 {
 public:
     GraphViewHandler(QGraphicsView* view);
+    ~GraphViewHandler();
 
     void Repaint();
 

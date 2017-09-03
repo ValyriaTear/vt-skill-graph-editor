@@ -41,6 +41,9 @@ class SkillNodesHandler
 {
 public:
     SkillNodesHandler(QTableView* tableView);
+    ~SkillNodesHandler() {
+        delete _model;
+    }
 
     //! \brief Decorator for the table view
     void SetupSkillNodesTableView(QTableView* tableView);
