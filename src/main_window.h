@@ -16,7 +16,7 @@ namespace Ui {
 class MainWindow;
 }
 class SkillNodesHandler;
-class GraphViewHandler;
+class GraphScene;
 
 //! \brief Main app window
 class MainWindow : public QMainWindow
@@ -45,7 +45,7 @@ private:
     SkillNodesHandler* _skill_nodes_handler;
 
     //! \brief Graph view handler
-    GraphViewHandler* _graph_view_handler;
+    GraphScene* _graph_scene;
 };
 
 #endif // MAINWINDOW_H

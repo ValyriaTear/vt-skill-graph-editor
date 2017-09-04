@@ -7,64 +7,69 @@
 // See http://www.gnu.org/copyleft/gpl.html for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "graph_view_handler.h"
+#include "graph_scene.h"
 
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
+#include <QGraphicsSceneMouseEvent>
 
-// Maybe later use resizable scene and grid size.
+// Maybe later use resizable scene and grid size (in pixels).
 const uint32_t SCENE_SIZE = 2000;
 const uint32_t GRID_SIZE = 50;
+const uint32_t NODE_SIZE = 10;
 
-GraphViewHandler::GraphViewHandler(QGraphicsView* view):
+GraphScene::GraphScene(QGraphicsView* view):
     _view(view)
 {
-    // create a scene and add it your view
-    QGraphicsScene* scene = new QGraphicsScene;
-    view->setScene(scene);
+    // Register the scene
+    _view->setScene(this);
 
-    view->setBackgroundBrush(QBrush(Qt::black));
+    _view->setBackgroundBrush(QBrush(Qt::black));
 
     // Helps with rendering when not using OpenGL
-    view->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
+    _view->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
 
-    view->setMouseTracking(true);
+    _view->setMouseTracking(true);
     // Helps when resizing
-    view->viewport()->setAttribute(Qt::WA_StaticContents);
+    _view->viewport()->setAttribute(Qt::WA_StaticContents);
 }
 
-GraphViewHandler::~GraphViewHandler()
+void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
 {
-    delete _view;
+    // Takes in account the current scrolling
+    int32_t x = evt->scenePos().x();
+    int32_t y = evt->scenePos().y();
+
+    addEllipse(x - NODE_SIZE / 2, y - NODE_SIZE / 2,
+               NODE_SIZE, NODE_SIZE, QPen(Qt::white));
 }
 
-void GraphViewHandler::Repaint()
+void GraphScene::Repaint()
 {
-    QGraphicsScene* scene = _view->scene();
-    scene->clear();
+    clear();
 
     // Grid rows headers
     const QColor text_color = QColor(255, 255, 255, 255);
-    QGraphicsTextItem* text = scene->addText(QString("X ->"));
+    QGraphicsTextItem* text = addText(QString("X ->"));
     text->moveBy(20, 20);
     text->setDefaultTextColor(text_color);
-    text = scene->addText(QString("Y\n|\nv"));
+    text = addText(QString("Y\n|\nv"));
     text->moveBy(20, 40);
     text->setDefaultTextColor(text_color);
 
     // Add the vertical lines first, paint them red
     for (size_t x = 0; x <= SCENE_SIZE; x += GRID_SIZE) {
-        scene->addLine(x, 0, x, SCENE_SIZE, QPen(Qt::white));
-        QGraphicsTextItem* text = scene->addText(QString("%1").arg(x));
+        addLine(x, 0, x, SCENE_SIZE, QPen(Qt::white));
+        QGraphicsTextItem* text = addText(QString("%1").arg(x));
         text->moveBy(x , 0);
         text->setDefaultTextColor(text_color);
     }
 
     // Now add the horizontal lines, paint them green
     for (size_t y = 0; y <= SCENE_SIZE; y += GRID_SIZE) {
-        scene->addLine(0, y, SCENE_SIZE, y, QPen(Qt::white));
+        addLine(0, y, SCENE_SIZE, y, QPen(Qt::white));
         if (y > 0) {
-            QGraphicsTextItem* text = scene->addText(QString("%1").arg(y));
+            QGraphicsTextItem* text = addText(QString("%1").arg(y));
             text->moveBy(2 , y);
             text->setDefaultTextColor(text_color);
         }

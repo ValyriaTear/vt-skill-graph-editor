@@ -30,12 +30,12 @@ SOURCES += \
         src/main.cpp \
     src/skill_nodes_handler.cpp \
     src/main_window.cpp \
-    src/graph_view_handler.cpp
+    src/graph_scene.cpp
 
 HEADERS += \
     src/skill_nodes_handler.h \
     src/main_window.h \
-    src/graph_view_handler.h
+    src/graph_scene.h
 
 FORMS += \
     src/main_window.ui

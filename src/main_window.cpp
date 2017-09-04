@@ -11,7 +11,7 @@
 #include "ui_main_window.h"
 
 #include "skill_nodes_handler.h"
-#include "graph_view_handler.h"
+#include "graph_scene.h"
 
 #include <QResizeEvent>
 
@@ -19,14 +19,14 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
     _skill_nodes_handler(nullptr),
-    _graph_view_handler(nullptr)
+    _graph_scene(nullptr)
 {
     // Build ui from ui file
     _ui->setupUi(this);
 
     // Obtain skill table reference and make it handled by the skill node handler
     _skill_nodes_handler = new SkillNodesHandler(_ui->skill_nodes_table_view);
-    _graph_view_handler = new GraphViewHandler(_ui->skill_graph_graphics_view);
+    _graph_scene = new GraphScene(_ui->skill_graph_graphics_view);
 
     // Link widgets actions
     connect(_ui->node_append_button, SIGNAL(clicked()), this, SLOT(AppendNodeRow()));
@@ -38,7 +38,7 @@ MainWindow::~MainWindow()
     // delete the ui instance
     delete _ui;
     delete _skill_nodes_handler;
-    delete _graph_view_handler;
+    delete _graph_scene;
 }
 
 void MainWindow::AppendNodeRow()
@@ -78,5 +78,5 @@ void MainWindow::resizeEvent(QResizeEvent* event)
    _ui->node_remove_button->move(_ui->node_append_button->pos().x() + _ui->node_append_button->width() + 10,
                                  _ui->node_append_button->pos().y());
 
-   _graph_view_handler->Repaint();
+   _graph_scene->Repaint();
 }

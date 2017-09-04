@@ -7,23 +7,31 @@
 // See http://www.gnu.org/copyleft/gpl.html for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef GRAPH_VIEW_HANDLER_H
-#define GRAPH_VIEW_HANDLER_H
+#ifndef GRAPH_SCENE_H
+#define GRAPH_SCENE_H
+
+#include <QGraphicsScene>
 
 class QGraphicsView;
+class QGraphicsSceneMouseEvent;
 
 //! \brief Handler of all skill graph view painting operations.
-class GraphViewHandler
+class GraphScene : public QGraphicsScene
 {
 public:
-    GraphViewHandler(QGraphicsView* view);
-    ~GraphViewHandler();
+    GraphScene(QGraphicsView* view);
+    ~GraphScene()
+    {}
 
     void Repaint();
 
+protected:
+    //! \name Mouse Processing Functions
+    void mousePressEvent(QGraphicsSceneMouseEvent* evt);
+
 private:
-    //! \brief The graphic view
+    //! \brief The graphic view. Handled by main window, don't delete it.
     QGraphicsView* _view;
 };
 
-#endif // GRAPH_VIEW_HANDLER_H
+#endif // GRAPH_SCENE_H
