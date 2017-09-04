@@ -18,32 +18,35 @@
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
-    _skill_nodes_handler(nullptr),
+    _nodes_handler(nullptr),
     _graph_scene(nullptr)
 {
     // Build ui from ui file
     _ui->setupUi(this);
 
     // Obtain skill table reference and make it handled by the skill node handler
-    _skill_nodes_handler = new SkillNodesHandler(_ui->skill_nodes_table_view);
-    _graph_scene = new GraphScene(_ui->skill_graph_graphics_view);
+    _nodes_handler = new SkillNodesHandler(_ui->skill_nodes_table_view);
+    _graph_scene = new GraphScene(_ui->skill_graph_graphics_view, _nodes_handler);
 
     // Link widgets actions
     connect(_ui->node_append_button, SIGNAL(clicked()), this, SLOT(AppendNodeRow()));
     connect(_ui->node_remove_button, SIGNAL(clicked()), this, SLOT(RemoveNodeRow()));
+
+    // Init scene
+    _graph_scene->Repaint();
 }
 
 MainWindow::~MainWindow()
 {
     // delete the ui instance
     delete _ui;
-    delete _skill_nodes_handler;
+    delete _nodes_handler;
     delete _graph_scene;
 }
 
 void MainWindow::AppendNodeRow()
 {
-    _skill_nodes_handler->AppendNodeRow();
+    _nodes_handler->AppendNodeRow();
 }
 
 void MainWindow::RemoveNodeRow()
@@ -53,7 +56,7 @@ void MainWindow::RemoveNodeRow()
     for(int32_t i = 0; i < indexList.count(); ++i)
     {
         QModelIndex index = indexList.at(i);
-        _skill_nodes_handler->RemoveNodeRow(index.row());
+        _nodes_handler->RemoveNodeRow(index.row());
     }
 }
 
@@ -77,6 +80,4 @@ void MainWindow::resizeEvent(QResizeEvent* event)
                                  _ui->main_tool_bar->height() + _ui->skill_nodes_table_view->height() + 10);
    _ui->node_remove_button->move(_ui->node_append_button->pos().x() + _ui->node_append_button->width() + 10,
                                  _ui->node_append_button->pos().y());
-
-   _graph_scene->Repaint();
 }

@@ -14,15 +14,17 @@
 
 class QGraphicsView;
 class QGraphicsSceneMouseEvent;
+class SkillNodesHandler;
 
 //! \brief Handler of all skill graph view painting operations.
 class GraphScene : public QGraphicsScene
 {
 public:
-    GraphScene(QGraphicsView* view);
+    GraphScene(QGraphicsView* view, SkillNodesHandler* node_handler);
     ~GraphScene()
     {}
 
+    //! \brief Repaint the whole scene from scratch
     void Repaint();
 
 protected:
@@ -30,8 +32,16 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* evt);
 
 private:
-    //! \brief The graphic view. Handled by main window, don't delete it.
+    //! \brief Adds a node on the scene with the given id
+    void addNode(int32_t id, uint32_t x, uint32_t y);
+
+    //! \brief The graphic view.
+    //! Handled by main window, don't delete it.
     QGraphicsView* _view;
+
+    //! \brief The skill nodes handler.
+    //! Handled by main window, don't delete it.
+    SkillNodesHandler* _node_handler;
 };
 
 #endif // GRAPH_SCENE_H

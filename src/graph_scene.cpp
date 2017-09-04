@@ -9,6 +9,8 @@
 
 #include "graph_scene.h"
 
+#include "skill_nodes_handler.h"
+
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
@@ -18,11 +20,19 @@ const uint32_t SCENE_SIZE = 2000;
 const uint32_t GRID_SIZE = 50;
 const uint32_t NODE_SIZE = 10;
 
-GraphScene::GraphScene(QGraphicsView* view):
-    _view(view)
+//! \brief The data id of the Graphics item that stores the node id.
+const int ITEM_ID_KEY = 0;
+
+//! \brief Default text color
+const QColor text_color = QColor(255, 255, 255, 255);
+
+GraphScene::GraphScene(QGraphicsView* view, SkillNodesHandler* node_handler):
+    _view(view),
+    _node_handler(node_handler)
 {
-    // Register the scene
+    // Register the scene to other components
     _view->setScene(this);
+    _node_handler->SetScene(this);
 
     _view->setBackgroundBrush(QBrush(Qt::black));
 
@@ -40,8 +50,36 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
     int32_t x = evt->scenePos().x();
     int32_t y = evt->scenePos().y();
 
-    addEllipse(x - NODE_SIZE / 2, y - NODE_SIZE / 2,
-               NODE_SIZE, NODE_SIZE, QPen(Qt::white));
+    if (evt->button() == Qt::LeftButton) {
+        int32_t node_id = _node_handler->AppendNodeRow(x, y);
+        if (node_id == 0) {
+            qWarning("Error: The row wasn't added.");
+            return;
+        }
+
+        addNode(node_id, x, y);
+    }
+    else if (evt->button() == Qt::RightButton) {
+        // Find the node and remove it if it exists.
+        int32_t node_row = _node_handler->FindNode(x, y, NODE_SIZE);
+        if (node_row != UNFOUND_NODE)
+            _node_handler->RemoveNodeRow(node_row);
+        // FIXME: Remove the ellipse as well
+    }
+}
+
+void GraphScene::addNode(int32_t id, uint32_t x, uint32_t y)
+{
+    QGraphicsItem* item = addEllipse(x - NODE_SIZE / 2,
+                                     y - NODE_SIZE / 2,
+                                     NODE_SIZE,
+                                     NODE_SIZE,
+                                     QPen(Qt::white));
+    item->setData(ITEM_ID_KEY, QVariant::fromValue(id));
+    QGraphicsTextItem* text = addText(QString::number(id));
+    text->moveBy(x, y);
+    text->setDefaultTextColor(text_color);
+    item->setData(ITEM_ID_KEY, QVariant::fromValue(id));
 }
 
 void GraphScene::Repaint()
@@ -49,7 +87,6 @@ void GraphScene::Repaint()
     clear();
 
     // Grid rows headers
-    const QColor text_color = QColor(255, 255, 255, 255);
     QGraphicsTextItem* text = addText(QString("X ->"));
     text->moveBy(20, 20);
     text->setDefaultTextColor(text_color);
@@ -60,8 +97,8 @@ void GraphScene::Repaint()
     // Add the vertical lines first, paint them red
     for (size_t x = 0; x <= SCENE_SIZE; x += GRID_SIZE) {
         addLine(x, 0, x, SCENE_SIZE, QPen(Qt::white));
-        QGraphicsTextItem* text = addText(QString("%1").arg(x));
-        text->moveBy(x , 0);
+        QGraphicsTextItem* text = addText(QString::number(x));
+        text->moveBy(x, 0);
         text->setDefaultTextColor(text_color);
     }
 
@@ -69,9 +106,23 @@ void GraphScene::Repaint()
     for (size_t y = 0; y <= SCENE_SIZE; y += GRID_SIZE) {
         addLine(0, y, SCENE_SIZE, y, QPen(Qt::white));
         if (y > 0) {
-            QGraphicsTextItem* text = addText(QString("%1").arg(y));
-            text->moveBy(2 , y);
+            QGraphicsTextItem* text = addText(QString::number(y));
+            text->moveBy(2, y);
             text->setDefaultTextColor(text_color);
         }
+    }
+
+    // Repaint ellipses and ids
+    const QStandardItemModel* model = _node_handler->getData();
+    for (int32_t i = 0; i < model->rowCount(); ++i) {
+        QModelIndex index = model->index(i, PositionX, QModelIndex());
+        uint32_t node_x = model->data(index).toUInt();
+        index = model->index(i, PositionY, QModelIndex());
+        uint32_t node_y = model->data(index).toUInt();
+
+        if (node_x == 0 || node_y == 0)
+            continue;
+
+        addNode(i + 1, node_x, node_y);
     }
 }

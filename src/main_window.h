@@ -42,7 +42,7 @@ private:
     Ui::MainWindow* _ui;
 
     //! \brief Skill node handler
-    SkillNodesHandler* _skill_nodes_handler;
+    SkillNodesHandler* _nodes_handler;
 
     //! \brief Graph view handler
     GraphScene* _graph_scene;
