@@ -29,11 +29,11 @@ MainWindow::MainWindow(QWidget* parent) :
     _graph_scene = new GraphScene(_ui->skill_graph_graphics_view, _nodes_handler);
 
     // Link widgets actions
-    connect(_ui->node_append_button, SIGNAL(clicked()), this, SLOT(AppendNodeRow()));
-    connect(_ui->node_remove_button, SIGNAL(clicked()), this, SLOT(RemoveNodeRow()));
+    connect(_ui->node_append_button, SIGNAL(clicked()), this, SLOT(appendNodeRow()));
+    connect(_ui->node_remove_button, SIGNAL(clicked()), this, SLOT(removeNodeRow()));
 
     // Init scene
-    _graph_scene->Repaint();
+    _graph_scene->repaint();
 }
 
 MainWindow::~MainWindow()
@@ -44,19 +44,19 @@ MainWindow::~MainWindow()
     delete _graph_scene;
 }
 
-void MainWindow::AppendNodeRow()
+void MainWindow::appendNodeRow()
 {
-    _nodes_handler->AppendNodeRow();
+    _nodes_handler->appendNodeRow();
 }
 
-void MainWindow::RemoveNodeRow()
+void MainWindow::removeNodeRow()
 {
     QModelIndexList indexList = _ui->skill_nodes_table_view->selectionModel()->selectedIndexes();
     // Multiple rows can be selected
     for(int32_t i = 0; i < indexList.count(); ++i)
     {
         QModelIndex index = indexList.at(i);
-        _nodes_handler->RemoveNodeRow(index.row());
+        _nodes_handler->removeNodeRow(index.row());
     }
 }
 

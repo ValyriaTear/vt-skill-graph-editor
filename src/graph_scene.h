@@ -25,7 +25,7 @@ public:
     {}
 
     //! \brief Repaint the whole scene from scratch
-    void Repaint();
+    void repaint();
 
 protected:
     //! \name Mouse Processing Functions

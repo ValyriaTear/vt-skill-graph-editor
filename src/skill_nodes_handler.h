@@ -54,28 +54,28 @@ public:
     }
 
     //! \brief Decorator for the table view
-    void SetupSkillNodesTableView(QTableView* tableView);
+    void setupSkillNodesTableView(QTableView* tableView);
 
     //! \brief Set the current node scene
-    void SetScene(GraphScene* graph_scene) {
+    void setScene(GraphScene* graph_scene) {
         _scene = graph_scene;
     }
 
     //! \brief Append an empty node row
     //! \returns the node Id
-    int32_t AppendNodeRow();
+    int32_t appendNodeRow();
 
     //! \brief Append a node row with given coordinates
     //! \returns the node Id
-    int32_t AppendNodeRow(uint32_t x, uint32_t y);
+    int32_t appendNodeRow(uint32_t x, uint32_t y);
 
     //! \brief Remove the node row at the given index
-    void RemoveNodeRow(int32_t row_id);
+    void removeNodeRow(int32_t row_id);
 
     //! \brief Search a node in the list and return its corresponding row id
     //! if found, or UNFOUND_NODE if not.
     //! \param the search zone is in pixels around the center of the given point.
-    int32_t FindNode(uint32_t x, uint32_t y,
+    int32_t findNode(uint32_t x, uint32_t y,
                      uint32_t search_zone = DEFAULT_SEARCH_AREA);
 
     //! \brief Returns the table view data

@@ -7,8 +7,8 @@
 // See http://www.gnu.org/copyleft/gpl.html for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include <QMainWindow>
 
@@ -29,10 +29,10 @@ public:
 
 private slots:
     //! \brief When Append button is clicked
-    void AppendNodeRow();
+    void appendNodeRow();
 
     //! \brief When Remove button is clicked
-    void RemoveNodeRow();
+    void removeNodeRow();
 
     //! \brief When main window is resized
     void resizeEvent(QResizeEvent* event) override;
@@ -48,4 +48,4 @@ private:
     GraphScene* _graph_scene;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAIN_WINDOW_H

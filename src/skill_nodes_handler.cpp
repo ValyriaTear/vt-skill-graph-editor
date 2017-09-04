@@ -17,10 +17,10 @@ SkillNodesHandler::SkillNodesHandler(QTableView* tableView):
     _model(new QStandardItemModel(tableView))
 {
     // Decorate the table view
-    SetupSkillNodesTableView(tableView);
+    setupSkillNodesTableView(tableView);
 }
 
-void SkillNodesHandler::SetupSkillNodesTableView(QTableView* tableView)
+void SkillNodesHandler::setupSkillNodesTableView(QTableView* tableView)
 {
     if (tableView == nullptr) {
         qInfo("Cannot construct table view. Invalid object provided.");
@@ -43,13 +43,13 @@ void SkillNodesHandler::SetupSkillNodesTableView(QTableView* tableView)
     tableView->show();
 }
 
-int32_t SkillNodesHandler::AppendNodeRow()
+int32_t SkillNodesHandler::appendNodeRow()
 {
     _model->appendRow(nullptr);
     return _model->rowCount();
 }
 
-int32_t SkillNodesHandler::AppendNodeRow(uint32_t x, uint32_t y)
+int32_t SkillNodesHandler::appendNodeRow(uint32_t x, uint32_t y)
 {
     // N.B.: The model takes ownership of the data
     _model->appendRow(QList<QStandardItem*>()
@@ -58,7 +58,7 @@ int32_t SkillNodesHandler::AppendNodeRow(uint32_t x, uint32_t y)
     return _model->rowCount();
 }
 
-void SkillNodesHandler::RemoveNodeRow(int32_t row_id)
+void SkillNodesHandler::removeNodeRow(int32_t row_id)
 {
     if (row_id >= _model->rowCount()) {
         qWarning("Invalid row id %d", row_id);
@@ -67,10 +67,10 @@ void SkillNodesHandler::RemoveNodeRow(int32_t row_id)
     _model->removeRow(row_id);
 
     // Repaint and resync node ids with table view.
-    _scene->Repaint();
+    _scene->repaint();
 }
 
-int32_t SkillNodesHandler::FindNode(uint32_t x,
+int32_t SkillNodesHandler::findNode(uint32_t x,
                                     uint32_t y,
                                     uint32_t search_zone)
 {

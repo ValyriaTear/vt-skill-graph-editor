@@ -32,7 +32,7 @@ GraphScene::GraphScene(QGraphicsView* view, SkillNodesHandler* node_handler):
 {
     // Register the scene to other components
     _view->setScene(this);
-    _node_handler->SetScene(this);
+    _node_handler->setScene(this);
 
     _view->setBackgroundBrush(QBrush(Qt::black));
 
@@ -51,7 +51,7 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
     int32_t y = evt->scenePos().y();
 
     if (evt->button() == Qt::LeftButton) {
-        int32_t node_id = _node_handler->AppendNodeRow(x, y);
+        int32_t node_id = _node_handler->appendNodeRow(x, y);
         if (node_id == 0) {
             qWarning("Error: The row wasn't added.");
             return;
@@ -61,9 +61,9 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
     }
     else if (evt->button() == Qt::RightButton) {
         // Find the node and remove it if it exists.
-        int32_t node_row = _node_handler->FindNode(x, y, NODE_SIZE);
+        int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
         if (node_row != UNFOUND_NODE)
-            _node_handler->RemoveNodeRow(node_row);
+            _node_handler->removeNodeRow(node_row);
         // FIXME: Remove the ellipse as well
     }
 }
@@ -82,7 +82,7 @@ void GraphScene::addNode(int32_t id, uint32_t x, uint32_t y)
     item->setData(ITEM_ID_KEY, QVariant::fromValue(id));
 }
 
-void GraphScene::Repaint()
+void GraphScene::repaint()
 {
     clear();
 
