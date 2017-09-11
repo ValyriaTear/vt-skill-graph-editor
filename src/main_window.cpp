@@ -29,8 +29,6 @@ MainWindow::~MainWindow()
 {
     // delete owned widgets
     delete _view_splitter;
-
-    delete _nodes_table;
     delete _graph_scene;
 }
 
@@ -43,20 +41,20 @@ void MainWindow::setupMainView()
     _view_splitter->setOrientation(Qt::Horizontal);
     setCentralWidget(_view_splitter);
 
-    _table_splitter = new QSplitter(_view_splitter);
-    _table_splitter->setOrientation(Qt::Vertical);
+    QSplitter* table_splitter = new QSplitter(_view_splitter);
+    table_splitter->setOrientation(Qt::Vertical);
 
-    _graphics_view = new QGraphicsView(this);
+    QGraphicsView* graphics_view = new QGraphicsView(this);
 
     // Obtain skill table reference and make it handled by the skill node handler
     _nodes_table = new SkillNodesTable(this);
-    _graph_scene = new GraphScene(_graphics_view, _nodes_table);
+    _graph_scene = new GraphScene(graphics_view, _nodes_table);
 
-    _view_splitter->addWidget(_graphics_view);
-    _view_splitter->addWidget(_table_splitter);
-    _table_splitter->addWidget(_nodes_table);
+    _view_splitter->addWidget(graphics_view);
+    _view_splitter->addWidget(table_splitter);
+    table_splitter->addWidget(_nodes_table);
 
-    QToolBar* node_btn_toolbar = new QToolBar("Nodes", _table_splitter);
+    QToolBar* node_btn_toolbar = new QToolBar("Nodes", table_splitter);
 
     // Add buttons
     QPushButton* button = new QPushButton(QString("+"), node_btn_toolbar);
@@ -71,7 +69,10 @@ void MainWindow::setupMainView()
     connect(button, SIGNAL(clicked(bool)), this, SLOT(removeNodeRow()));
     node_btn_toolbar->addWidget(button);
 
-    _table_splitter->addWidget(node_btn_toolbar);
+    table_splitter->addWidget(node_btn_toolbar);
+
+    // Set main widgets sizes
+    _view_splitter->setSizes(QList<int>() << 400 << 400);
 
     // Init scene
     _graph_scene->repaint();
