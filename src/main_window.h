@@ -42,6 +42,7 @@ private:
 
     //! \brief Main Window UI pointer
     QSplitter* _view_splitter;
+    QMenu* _file_menu;
 
     //! \section Custom widgets
 
