@@ -20,15 +20,14 @@
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _view_splitter(nullptr),
-    _file_menu(nullptr),
     _nodes_table(nullptr),
     _graph_scene(nullptr)
 {
     setupMainView();
 
     // TODO: Add real menus on need (open, save, ...)
-    _file_menu = menuBar()->addMenu("&File");
-    QAction* quit_action = _file_menu->addAction(QString("&Quit"));
+    QMenu* file_menu = menuBar()->addMenu("&File");
+    QAction* quit_action = file_menu->addAction(QString("&Quit"));
     connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
 }
 
