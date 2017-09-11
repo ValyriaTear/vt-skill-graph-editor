@@ -12,11 +12,11 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
-}
 class SkillNodesTable;
 class GraphScene;
+
+class QSplitter;
+class QGraphicsView;
 
 //! \brief Main app window
 class MainWindow : public QMainWindow
@@ -34,12 +34,16 @@ private slots:
     //! \brief When Remove button is clicked
     void removeNodeRow();
 
-    //! \brief When main window is resized
-    void resizeEvent(QResizeEvent* event) override;
-
 private:
-    //! \brief Main Window UI pointer.
-    Ui::MainWindow* _ui;
+    //! \brief Setup main view widgets. Called once at init.
+    void setupMainView();
+
+    //! \section Qt standard widgets
+
+    //! \brief Main Window UI pointer
+    QSplitter* _view_splitter;
+
+    //! \section Custom widgets
 
     //! \brief Skill node handler
     SkillNodesTable* _nodes_table;

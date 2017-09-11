@@ -8,13 +8,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "main_window.h"
+
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    QApplication app(argc, argv);
+    app.setApplicationName("VT - Skill Graph Editor");
+    MainWindow win;
+    win.show();
 
-    return a.exec();
+    return app.exec();
 }

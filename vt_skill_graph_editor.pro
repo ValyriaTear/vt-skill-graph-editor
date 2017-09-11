@@ -39,8 +39,7 @@ HEADERS += \
     src/node_model.h \
     src/skill_nodes_table.h
 
-FORMS += \
-    src/main_window.ui
+FORMS +=
 
 DISTFILES += \
     COPYRIGHT \
