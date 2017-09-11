@@ -9,7 +9,7 @@
 
 #include "graph_scene.h"
 
-#include "skill_nodes_handler.h"
+#include "skill_nodes_table.h"
 
 #include <QGraphicsView>
 #include <QGraphicsTextItem>
@@ -26,7 +26,7 @@ const int ITEM_ID_KEY = 0;
 //! \brief Default text color
 const QColor text_color = QColor(255, 255, 255, 255);
 
-GraphScene::GraphScene(QGraphicsView* view, SkillNodesHandler* node_handler):
+GraphScene::GraphScene(QGraphicsView* view, SkillNodesTable* node_handler):
     _view(view),
     _node_handler(node_handler)
 {
@@ -64,7 +64,6 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
         int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
         if (node_row != UNFOUND_NODE)
             _node_handler->removeNodeRow(node_row);
-        // FIXME: Remove the ellipse as well
     }
 }
 
@@ -114,6 +113,8 @@ void GraphScene::repaint()
 
     // Repaint ellipses and ids
     const QStandardItemModel* model = _node_handler->getData();
+    if (model == nullptr)
+        return;
     for (int32_t i = 0; i < model->rowCount(); ++i) {
         QModelIndex index = model->index(i, PositionX, QModelIndex());
         uint32_t node_x = model->data(index).toUInt();

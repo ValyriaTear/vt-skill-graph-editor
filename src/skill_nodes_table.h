@@ -7,11 +7,12 @@
 // See http://www.gnu.org/copyleft/gpl.html for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef SKILL_NODES_HANDLER_H
-#define SKILL_NODES_HANDLER_H
+#ifndef SKILL_NODES_TABLE_H
+#define SKILL_NODES_TABLE_H
 
 #include <QTableView>
-#include <QStandardItemModel>
+
+#include "node_model.h"
 
 class GraphScene;
 
@@ -45,16 +46,19 @@ const QString NodesHeaders[SKILL_TABLE_COL_NB] = {
 };
 
 //! \brief Handler of all skill node operation in the table view
-class SkillNodesHandler
+class SkillNodesTable : public QTableView
 {
+    Q_OBJECT
+
 public:
-    SkillNodesHandler(QTableView* tableView);
-    ~SkillNodesHandler() {
+    SkillNodesTable(QWidget* parent = Q_NULLPTR);
+
+    ~SkillNodesTable() {
         delete _model;
     }
 
     //! \brief Decorator for the table view
-    void setupSkillNodesTableView(QTableView* tableView);
+    void setupSkillNodesTableView();
 
     //! \brief Set the current node scene
     void setScene(GraphScene* graph_scene) {
@@ -79,17 +83,24 @@ public:
                      uint32_t search_zone = DEFAULT_SEARCH_AREA);
 
     //! \brief Returns the table view data
-    const QStandardItemModel* getData() const {
+    const NodeModel* getData() const {
         return _model;
     }
 
+private slots:
+    //! \brief Triggered when data is changed in the table view
+    void onDataChanged();
+
+    //! \brief Triggered when rows are removed from the table view
+    void onRowsremoved();
+
 private:
     //! \brief Data model which contains the actual data
-    QStandardItemModel* _model;
+    NodeModel* _model;
 
     //! \brief The graph scene.
     //! Handled by Main Window, don't delete it.
     GraphScene* _scene;
 };
 
-#endif // SKILL_NODES_HANDLER_H
+#endif // SKILL_NODES_TABLE_H

@@ -15,7 +15,7 @@
 namespace Ui {
 class MainWindow;
 }
-class SkillNodesHandler;
+class SkillNodesTable;
 class GraphScene;
 
 //! \brief Main app window
@@ -42,7 +42,7 @@ private:
     Ui::MainWindow* _ui;
 
     //! \brief Skill node handler
-    SkillNodesHandler* _nodes_handler;
+    SkillNodesTable* _nodes_table;
 
     //! \brief Graph view handler
     GraphScene* _graph_scene;

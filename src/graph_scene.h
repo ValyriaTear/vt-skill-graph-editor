@@ -14,13 +14,13 @@
 
 class QGraphicsView;
 class QGraphicsSceneMouseEvent;
-class SkillNodesHandler;
+class SkillNodesTable;
 
 //! \brief Handler of all skill graph view painting operations.
 class GraphScene : public QGraphicsScene
 {
 public:
-    GraphScene(QGraphicsView* view, SkillNodesHandler* node_handler);
+    GraphScene(QGraphicsView* view, SkillNodesTable* node_handler);
     ~GraphScene()
     {}
 
@@ -41,7 +41,7 @@ private:
 
     //! \brief The skill nodes handler.
     //! Handled by main window, don't delete it.
-    SkillNodesHandler* _node_handler;
+    SkillNodesTable* _node_handler;
 };
 
 #endif // GRAPH_SCENE_H

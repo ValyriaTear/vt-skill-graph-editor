@@ -28,14 +28,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         src/main.cpp \
-    src/skill_nodes_handler.cpp \
     src/main_window.cpp \
-    src/graph_scene.cpp
+    src/graph_scene.cpp \
+    src/node_model.cpp \
+    src/skill_nodes_table.cpp
 
 HEADERS += \
-    src/skill_nodes_handler.h \
     src/main_window.h \
-    src/graph_scene.h
+    src/graph_scene.h \
+    src/node_model.h \
+    src/skill_nodes_table.h
 
 FORMS += \
     src/main_window.ui
