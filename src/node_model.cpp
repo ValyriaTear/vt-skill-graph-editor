@@ -12,14 +12,11 @@
 NodeModel::NodeModel(QObject* parent):
     QStandardItemModel(parent)
 {
+    // Link actions
+    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 }
 
-void NodeModel::onDataChanged()
+void NodeModel::onItemChanged(QStandardItem* item)
 {
     qInfo("Data changed in the table view!!!!!!");
-}
-
-void NodeModel::onRowsRemoved()
-{
-    qInfo("Rows removed in the table view!!!!!!");
 }

@@ -23,11 +23,8 @@ public:
     {}
 
 private slots:
-    //! \brief Triggered when data have been edited in the table view
-    void onDataChanged();
-
-    //! \brief Triggered when one or several rows are removed from the table view
-    void onRowsRemoved();
+    //! \brief Triggered for each changed items in the model
+    void onItemChanged(QStandardItem* item);
 };
 
 #endif // NODE_MODEL_H

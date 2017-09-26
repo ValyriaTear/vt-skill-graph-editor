@@ -23,26 +23,24 @@ const int32_t UNFOUND_NODE = -1;
 const uint32_t DEFAULT_SEARCH_AREA = 10;
 
 //! \brief Number of columns in the Table view
-const int32_t SKILL_TABLE_COL_NB = 6;
+const int32_t SKILL_TABLE_COL_NB = 5;
 
 //! \brief the nodes table view column ids
 enum NodesTableIds : int32_t {
     PositionX = 0,
     PositionY,
-    StatsLearned,
-    SkillLearned,
-    ItemsNeeded,
-    XPCost
+    Links,
+    XPCost,
+    Data
 };
 
 //! \brief The Node table headers
 const QString NodesHeaders[SKILL_TABLE_COL_NB] = {
     QString("X"),
     QString("Y"),
-    QString("Stats Learned"),
-    QString("Skill Learned"),
-    QString("Items Needed"),
-    QString("XP Cost")
+    QString("Links"),
+    QString("XP Cost"),
+    QString("Data")
 };
 
 //! \brief Handler of all skill node operation in the table view
@@ -94,7 +92,13 @@ private slots:
     //! \brief Triggered when rows are removed from the table view
     void onRowsremoved();
 
+    //! \brief Triggered when an item in the list is clicked
+    void clicked(const QModelIndex& index);
+
 private:
+    //! \brief Set the table item data format
+    void setDataItemFormat(int32_t row);
+
     //! \brief Data model which contains the actual data
     NodeModel* _model;
 

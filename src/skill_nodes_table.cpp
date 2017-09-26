@@ -23,6 +23,7 @@ SkillNodesTable::SkillNodesTable(QWidget* parent):
     // Link actions
     connect(_model, SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)), this, SLOT(onDataChanged()));
     connect(_model, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(onRowsremoved()));
+    connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(clicked(QModelIndex)));
 }
 
 void SkillNodesTable::setupSkillNodesTableView()
@@ -46,6 +47,7 @@ void SkillNodesTable::setupSkillNodesTableView()
 int32_t SkillNodesTable::appendNodeRow()
 {
     _model->appendRow(nullptr);
+    setDataItemFormat(_model->rowCount() - 1);
     return _model->rowCount();
 }
 
@@ -55,7 +57,23 @@ int32_t SkillNodesTable::appendNodeRow(uint32_t x, uint32_t y)
     _model->appendRow(QList<QStandardItem*>()
                       << new QStandardItem(QString::number(x))
                       << new QStandardItem(QString::number(y)));
+
+    setDataItemFormat(_model->rowCount() - 1);
+
     return _model->rowCount();
+}
+
+void SkillNodesTable::setDataItemFormat(int32_t row)
+{
+    // Set the data item as non editable
+    QStandardItem* item = _model->item(row, NodesTableIds::Data);
+    // If no item, create it first
+    if (!item) {
+        item = new QStandardItem();
+        _model->setItem(row, NodesTableIds::Data, item);
+    }
+    // Set the data as non editable
+    item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
 }
 
 void SkillNodesTable::removeNodeRow(int32_t row_id)
@@ -100,4 +118,11 @@ void SkillNodesTable::onDataChanged()
 void SkillNodesTable::onRowsremoved()
 {
     _scene->repaint();
+}
+
+void SkillNodesTable::clicked(const QModelIndex& index)
+{
+    QStandardItem* item = _model->itemFromIndex(index);
+    // Do stuff with the item ...
+    qInfo("item clicked");
 }
