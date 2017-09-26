@@ -12,6 +12,25 @@
 
 #include <QStandardItemModel>
 
+//! \brief the nodes table view column ids
+enum NodesTableIds : int32_t {
+    PositionX = 0,
+    PositionY,
+    XPCost,
+    Links,
+    Data,
+    ColumnsNumber
+};
+
+//! \brief The Node table headers
+const QString NodesHeaders[ColumnsNumber] = {
+    QString("X"),
+    QString("Y"),
+    QString("XP Cost"),
+    QString("Links"),
+    QString("Data")
+};
+
 //! \brief Custom model class to permit custom behavior on certain columns.
 class NodeModel : public QStandardItemModel
 {

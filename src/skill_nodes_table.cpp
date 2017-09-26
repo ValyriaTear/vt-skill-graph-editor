@@ -34,8 +34,8 @@ void SkillNodesTable::setupSkillNodesTableView()
     _model = new NodeModel(this);
 
     // Setup the table model
-    _model->setColumnCount(SKILL_TABLE_COL_NB);
-    for (uint32_t index = 0; index < SKILL_TABLE_COL_NB; ++index) {
+    _model->setColumnCount(NodesTableIds::ColumnsNumber);
+    for (uint32_t index = 0; index < NodesTableIds::ColumnsNumber; ++index) {
         // N.B.: The model takes ownership of the pointer
         _model->setHorizontalHeaderItem(index, new QStandardItem(NodesHeaders[index]));
     }
@@ -44,36 +44,43 @@ void SkillNodesTable::setupSkillNodesTableView()
     show();
 }
 
-int32_t SkillNodesTable::appendNodeRow()
-{
-    _model->appendRow(nullptr);
-    setDataItemFormat(_model->rowCount() - 1);
-    return _model->rowCount();
-}
-
-int32_t SkillNodesTable::appendNodeRow(uint32_t x, uint32_t y)
+int32_t SkillNodesTable::appendNodeRow(uint32_t x,
+                                       uint32_t y,
+                                       uint32_t xp_cost)
 {
     // N.B.: The model takes ownership of the data
     _model->appendRow(QList<QStandardItem*>()
                       << new QStandardItem(QString::number(x))
-                      << new QStandardItem(QString::number(y)));
+                      << new QStandardItem(QString::number(y))
+                      << new QStandardItem(QString::number(xp_cost)));
 
-    setDataItemFormat(_model->rowCount() - 1);
+    setRowFormat(_model->rowCount() - 1);
 
     return _model->rowCount();
 }
 
-void SkillNodesTable::setDataItemFormat(int32_t row)
+void SkillNodesTable::setRowFormat(int32_t row)
 {
-    // Set the data item as non editable
-    QStandardItem* item = _model->item(row, NodesTableIds::Data);
-    // If no item, create it first
-    if (!item) {
-        item = new QStandardItem();
-        _model->setItem(row, NodesTableIds::Data, item);
+    for (uint32_t i = 0; i < NodesTableIds::ColumnsNumber; ++i) {
+        switch(i) {
+            // Nothing special
+            default:
+                continue;
+                break;
+            // Set the columns as non editable and with gray background
+            case NodesTableIds::Links:
+            case NodesTableIds::Data: {
+                QStandardItem* item = _model->item(row, i);
+                // If no item, create it first
+                if (!item) {
+                    item = new QStandardItem();
+                    _model->setItem(row, i, item);
+                }
+                item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
+                item->setBackground(QBrush(QColor(125, 125, 125, 125)));
+            }
+        }
     }
-    // Set the data as non editable
-    item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
 }
 
 void SkillNodesTable::removeNodeRow(int32_t row_id)
@@ -123,6 +130,14 @@ void SkillNodesTable::onRowsremoved()
 void SkillNodesTable::clicked(const QModelIndex& index)
 {
     QStandardItem* item = _model->itemFromIndex(index);
-    // Do stuff with the item ...
-    qInfo("item clicked");
+    if (!item)
+        return;
+    switch (item->column()) {
+    default:
+        break;
+    case NodesTableIds::Links:
+    case NodesTableIds::Data:
+        // TODO: Open corresponding edition dialog
+        break;
+    }
 }

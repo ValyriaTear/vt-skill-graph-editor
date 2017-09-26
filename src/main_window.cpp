@@ -17,6 +17,10 @@
 #include <QSplitter>
 #include <QPushButton>
 
+const int32_t MAIN_WIN_WIDTH = 800;
+const int32_t MAIN_WIN_HEIGHT = 800;
+const int32_t NODE_TABLE_WIDTH = 505;
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _view_splitter(nullptr),
@@ -40,8 +44,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupMainView()
 {
-    setWindowTitle("Skill Graph Editor");
-    resize(800, 600);
+    setWindowTitle(tr("Skill Graph Editor"));
+    resize(MAIN_WIN_WIDTH, MAIN_WIN_HEIGHT);
 
     _view_splitter = new QSplitter(this);
     _view_splitter->setOrientation(Qt::Horizontal);
@@ -54,6 +58,8 @@ void MainWindow::setupMainView()
 
     // Obtain skill table reference and make it handled by the skill node handler
     _nodes_table = new SkillNodesTable(this);
+    _nodes_table->setMinimumWidth(NODE_TABLE_WIDTH);
+    _nodes_table->setMaximumWidth(NODE_TABLE_WIDTH);
     _graph_scene = new GraphScene(graphics_view, _nodes_table);
 
     _view_splitter->addWidget(graphics_view);
@@ -78,7 +84,7 @@ void MainWindow::setupMainView()
     table_splitter->addWidget(node_btn_toolbar);
 
     // Set main widgets sizes
-    _view_splitter->setSizes(QList<int>() << 400 << 400);
+    _view_splitter->setSizes(QList<int>() << 400 << NODE_TABLE_WIDTH);
 
     // Init scene
     _graph_scene->repaint();

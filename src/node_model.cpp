@@ -18,5 +18,28 @@ NodeModel::NodeModel(QObject* parent):
 
 void NodeModel::onItemChanged(QStandardItem* item)
 {
-    qInfo("Data changed in the table view!!!!!!");
+    if (!item)
+        return;
+
+    // Validate the item depending on its column
+    switch (item->column()) {
+        default:
+            break;
+        // Position and XP cost are unsigned integers
+        case NodesTableIds::PositionX:
+        case NodesTableIds::PositionY:
+        case NodesTableIds::XPCost: {
+            QVariant value = item->data(Qt::DisplayRole);
+            if (!value.isValid())
+                value = 0;
+            else
+                value = value.toUInt();
+            item->setData(value, Qt::DisplayRole);
+            break;
+        }
+        // Links and data are non editable through the list
+        case NodesTableIds::Links:
+        case NodesTableIds::Data:
+            break;
+    }
 }
