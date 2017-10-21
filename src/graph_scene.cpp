@@ -44,36 +44,64 @@ GraphScene::GraphScene(QGraphicsView* view, SkillNodesTable* node_handler):
     _view->viewport()->setAttribute(Qt::WA_StaticContents);
 }
 
-void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* evt)
+void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     // Takes in account the current scrolling
-    int32_t x = evt->scenePos().x();
-    int32_t y = evt->scenePos().y();
+    int32_t x = event->scenePos().x();
+    int32_t y = event->scenePos().y();
 
-    if (evt->button() == Qt::LeftButton) {
-        int32_t node_id = _node_handler->appendNodeRow(x, y);
-        if (node_id == 0) {
-            qWarning("Error: The row wasn't added.");
-            return;
+    if (event->button() == Qt::LeftButton) {
+        int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
+        if (node_row != UNFOUND_NODE) {
+            // Select node if mouse is hovering it
+            // Add link to other node if another node is already selected.
+            _node_handler->selectNodeAndRow(node_row);
         }
-
-        addNode(node_id, x, y);
+        else {
+            // Add new node
+            int32_t node_id = _node_handler->appendNodeRow(x, y);
+            if (node_id == 0) {
+                qWarning("Error: The row wasn't added.");
+                return;
+            }
+            addNode(node_id, x, y, false);
+            _node_handler->clearSelectedNodeId();
+        }
     }
-    else if (evt->button() == Qt::RightButton) {
+    else if (event->button() == Qt::RightButton) {
         // Find the node and remove it if it exists.
         int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
         if (node_row != UNFOUND_NODE)
             _node_handler->removeNodeRow(node_row);
+        // TODO: Fix links as ids above 'node_row' will be screwed
     }
 }
 
-void GraphScene::addNode(int32_t id, uint32_t x, uint32_t y)
+void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    int32_t last_x = event->lastScenePos().x();
+    int32_t last_y = event->lastScenePos().y();
+    int32_t x = event->scenePos().x();
+    int32_t y = event->scenePos().y();
+
+    // If dragging using left button,
+    if (event->buttons() & Qt::LeftButton) {
+        // Try and drag the hovered node
+        int32_t node_row = _node_handler->findNode(last_x, last_y, NODE_SIZE);
+        if (node_row != UNFOUND_NODE) {
+            // Move the node to new pos
+            _node_handler->setNodeRowCoord(node_row, x, y);
+        }
+    }
+}
+
+void GraphScene::addNode(int32_t id, uint32_t x, uint32_t y, bool selected)
 {
     QGraphicsItem* item = addEllipse(x - NODE_SIZE / 2,
                                      y - NODE_SIZE / 2,
                                      NODE_SIZE,
                                      NODE_SIZE,
-                                     QPen(Qt::white));
+                                     QPen(selected ? Qt::blue : Qt::white));
     item->setData(ITEM_ID_KEY, QVariant::fromValue(id));
     QGraphicsTextItem* text = addText(QString::number(id));
     text->moveBy(x, y);
@@ -112,9 +140,10 @@ void GraphScene::repaint()
     }
 
     // Repaint ellipses and ids
-    const QStandardItemModel* model = _node_handler->getData();
+    const NodeModel* model = _node_handler->getData();
     if (model == nullptr)
         return;
+    const std::vector<node_links_data>& node_links = model->getNodeLinks();
     for (int32_t i = 0; i < model->rowCount(); ++i) {
         QModelIndex index = model->index(i, PositionX, QModelIndex());
         uint32_t node_x = model->data(index).toUInt();
@@ -124,6 +153,26 @@ void GraphScene::repaint()
         if (node_x == 0 || node_y == 0)
             continue;
 
-        addNode(i + 1, node_x, node_y);
+        bool selected = (i == _node_handler->getSelectedNodeId());
+        addNode(i + 1, node_x, node_y, selected);
+
+        // Paint links
+        for (const node_links_data& links : node_links) {
+            if (links.first != i)
+                continue;
+            // if id is found, paint links
+            for (int32_t link_id : links.second) {
+                // Get link position
+                QModelIndex dest_index = model->index(link_id, PositionX, QModelIndex());
+                uint32_t dest_x = model->data(dest_index).toUInt();
+                dest_index = model->index(link_id, PositionY, QModelIndex());
+                uint32_t dest_y = model->data(dest_index).toUInt();
+
+                if (dest_x == 0 || dest_y == 0)
+                    continue;
+                // Draw link line
+                addLine(node_x, node_y, dest_x, dest_y, QPen(Qt::blue));
+            }
+        }
     }
 }

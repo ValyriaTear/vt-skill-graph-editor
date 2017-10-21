@@ -15,6 +15,7 @@
 
 SkillNodesTable::SkillNodesTable(QWidget* parent):
     QTableView(parent),
+    _selected_node_id(-1),
     _model(nullptr)
 {
     // Decorate the table view
@@ -90,14 +91,43 @@ void SkillNodesTable::removeNodeRow(int32_t row_id)
         return;
     }
     _model->removeRow(row_id);
+    // Clear selected node
+    _selected_node_id = -1;
 
     // Repaint and resync node ids with table view.
     _scene->repaint();
 }
 
+void SkillNodesTable::selectNodeAndRow(int32_t row_id)
+{
+    if (row_id >= _model->rowCount()) {
+        qWarning("Invalid row id %d", row_id);
+        return;
+    }
+
+    // If a node was already selected, and it is not the same node,
+    // add a link between them
+    if (row_id != -1 && _selected_node_id != -1 && row_id != _selected_node_id) {
+        _model->addLink(_selected_node_id, row_id);
+        // Reset selection
+        _selected_node_id = -1;
+        _scene->repaint();
+    }
+    // Select new node (or unselect it if -1)
+    else {
+        _selected_node_id = row_id;
+        _scene->repaint();
+    }
+
+    // Center table on row
+    if (row_id != -1)
+        selectRow(row_id);
+
+}
+
 int32_t SkillNodesTable::findNode(uint32_t x,
-                                    uint32_t y,
-                                    uint32_t search_zone)
+                                  uint32_t y,
+                                  uint32_t search_zone)
 {
     for (int32_t i = 0; i < _model->rowCount(); ++i) {
         QModelIndex index = _model->index(i, PositionX, QModelIndex());
@@ -115,6 +145,18 @@ int32_t SkillNodesTable::findNode(uint32_t x,
         }
     }
     return UNFOUND_NODE;
+}
+
+void SkillNodesTable::setNodeRowCoord(int32_t row_id, uint32_t x, uint32_t y)
+{
+    QStandardItem* item = _model->item(row_id, PositionX);
+    if (item) {
+        item->setData(QVariant(x), Qt::DisplayRole);
+    }
+    item = _model->item(row_id, PositionY);
+    if (item) {
+        item->setData(QVariant(y), Qt::DisplayRole);
+    }
 }
 
 void SkillNodesTable::onDataChanged()

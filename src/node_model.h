@@ -12,6 +12,8 @@
 
 #include <QStandardItemModel>
 
+using node_links_data = std::pair<int32_t, std::vector<int32_t> >;
+
 //! \brief the nodes table view column ids
 enum NodesTableIds : int32_t {
     PositionX = 0,
@@ -41,9 +43,22 @@ public:
     virtual ~NodeModel()
     {}
 
+    //! \brief Adds a link between two nodes.
+    void addLink(int32_t start_id, int32_t end_id);
+
+    //! \brief Provide reference to node links
+    const std::vector<node_links_data>& getNodeLinks() const {
+        return _node_links;
+    }
+
 private slots:
     //! \brief Triggered for each changed items in the model
     void onItemChanged(QStandardItem* item);
+
+private:
+    //! \brief List of node links
+    //! pair of node id: list of linked ids.
+    std::vector<node_links_data> _node_links;
 };
 
 #endif // NODE_MODEL_H

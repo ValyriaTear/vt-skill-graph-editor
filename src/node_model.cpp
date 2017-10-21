@@ -16,6 +16,26 @@ NodeModel::NodeModel(QObject* parent):
     connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 }
 
+void NodeModel::addLink(int32_t start_id, int32_t end_id)
+{
+    for (node_links_data& link_pair : _node_links) {
+        if (start_id != link_pair.first)
+            continue;
+
+        std::vector<int32_t>& links = link_pair.second;
+        // The node already has a link, add a new one
+        for (int32_t dest_id : links) {
+            // Link already exists
+            if (dest_id == end_id)
+                return;
+        }
+        links.push_back(end_id);
+    }
+    // The node does have a link from the start node yet
+    _node_links.push_back(std::pair<int32_t, std::vector<int32_t> >(start_id, std::vector<int32_t>()));
+    _node_links.back().second.push_back(end_id);
+}
+
 void NodeModel::onItemChanged(QStandardItem* item)
 {
     if (!item)

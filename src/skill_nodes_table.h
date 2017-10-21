@@ -51,11 +51,27 @@ public:
     //! \brief Remove the node row at the given index
     void removeNodeRow(int32_t row_id);
 
+    //! \brief Select node and center view on row
+    void selectNodeAndRow(int32_t row_id);
+
     //! \brief Search a node in the list and return its corresponding row id
     //! if found, or UNFOUND_NODE if not.
     //! \param the search zone is in pixels around the center of the given point.
     int32_t findNode(uint32_t x, uint32_t y,
                      uint32_t search_zone = DEFAULT_SEARCH_AREA);
+
+    //! \brief Update the node coordinates if the node exists
+    void setNodeRowCoord(int32_t row_id, uint32_t x, uint32_t y);
+
+    //! \brief Returns the selected node id or -1 if none
+    int32_t getSelectedNodeId() const {
+        return _selected_node_id;
+    }
+
+    //! \brief Clear selected node id
+    void clearSelectedNodeId() {
+        _selected_node_id = -1;
+    }
 
     //! \brief Returns the table view data
     const NodeModel* getData() const {
@@ -75,6 +91,9 @@ private slots:
 private:
     //! \brief Set the table item data format
     void setRowFormat(int32_t row);
+
+    //! \brief The currently selected node id, or -1 if none.
+    int32_t _selected_node_id;
 
     //! \brief Data model which contains the actual data
     NodeModel* _model;
