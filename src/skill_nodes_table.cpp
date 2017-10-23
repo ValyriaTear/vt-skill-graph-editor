@@ -10,6 +10,7 @@
 #include "skill_nodes_table.h"
 
 #include "graph_scene.h"
+#include "skill_data_dialog.h"
 
 #include <QLineF>
 
@@ -69,7 +70,6 @@ void SkillNodesTable::setRowFormat(int32_t row)
                 continue;
                 break;
             // Set the columns as non editable and with gray background
-            case NodesTableIds::Links:
             case NodesTableIds::Data: {
                 QStandardItem* item = _model->item(row, i);
                 // If no item, create it first
@@ -177,9 +177,13 @@ void SkillNodesTable::clicked(const QModelIndex& index)
     switch (item->column()) {
     default:
         break;
-    case NodesTableIds::Links:
     case NodesTableIds::Data:
-        // TODO: Open corresponding edition dialog
+        // Open corresponding edition dialog
+        SkillDataDialog dataDialog(QString::number(item->row() + 1), this);
+        // TODO: Load current data state into dialog
+        if (dataDialog.exec()) {
+            // TODO: Set data back here
+        }
         break;
     }
 }

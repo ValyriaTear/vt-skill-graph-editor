@@ -31,13 +31,15 @@ SOURCES += \
     src/main_window.cpp \
     src/graph_scene.cpp \
     src/node_model.cpp \
-    src/skill_nodes_table.cpp
+    src/skill_nodes_table.cpp \
+    src/skill_data_dialog.cpp
 
 HEADERS += \
     src/main_window.h \
     src/graph_scene.h \
     src/node_model.h \
-    src/skill_nodes_table.h
+    src/skill_nodes_table.h \
+    src/skill_data_dialog.h
 
 FORMS +=
 

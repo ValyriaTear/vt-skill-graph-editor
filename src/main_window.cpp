@@ -19,7 +19,7 @@
 
 const int32_t MAIN_WIN_WIDTH = 800;
 const int32_t MAIN_WIN_HEIGHT = 800;
-const int32_t NODE_TABLE_WIDTH = 505;
+const int32_t NODE_TABLE_WIDTH = 425;
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),

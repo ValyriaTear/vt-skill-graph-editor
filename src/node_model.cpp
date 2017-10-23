@@ -57,8 +57,7 @@ void NodeModel::onItemChanged(QStandardItem* item)
             item->setData(value, Qt::DisplayRole);
             break;
         }
-        // Links and data are non editable through the list
-        case NodesTableIds::Links:
+        // items and skill bonuses data are non editable through the list
         case NodesTableIds::Data:
             break;
     }

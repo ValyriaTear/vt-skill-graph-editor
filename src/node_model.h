@@ -19,7 +19,6 @@ enum NodesTableIds : int32_t {
     PositionX = 0,
     PositionY,
     XPCost,
-    Links,
     Data,
     ColumnsNumber
 };
@@ -29,7 +28,6 @@ const QString NodesHeaders[ColumnsNumber] = {
     QString("X"),
     QString("Y"),
     QString("XP Cost"),
-    QString("Links"),
     QString("Data")
 };
 
