@@ -41,6 +41,8 @@ public:
     virtual ~NodeModel()
     {}
 
+    bool removeRow(int row, const QModelIndex &parent = QModelIndex());
+
     //! \brief Adds a link between two nodes
     void addLink(int32_t start_id, int32_t end_id);
 

@@ -73,7 +73,6 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         int32_t node_row = _node_handler->findNode(x, y, NodeSize);
         if (node_row != UnfoundNode)
             _node_handler->removeNodeRow(node_row);
-        // TODO: Fix links as ids above 'node_row' will be screwed
     }
 }
 

@@ -18,6 +18,84 @@ NodeModel::NodeModel(QObject* parent):
     connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 }
 
+bool NodeModel::removeRow(int row, const QModelIndex& parent)
+{
+    if (!QAbstractItemModel::removeRow(row, parent))
+        return false;
+
+    // The row was removed, update the link and other node data
+    for (std::vector<NodeLinksData>::iterator it = _node_data.node_links.begin();
+            it != _node_data.node_links.end();) {
+        int32_t node_id = (*it).first;
+        // Remove links of now non existing node
+        if (node_id == row) {
+           it = _node_data.node_links.erase(it);
+           continue;
+        }
+
+        if (node_id > row) {
+            // If row is below id, decrement the id of links
+            (*it).first = node_id - 1;
+        }
+
+        // Also update the links id if above the row value
+        for (std::vector<int32_t>::iterator it2 = (*it).second.begin();
+                it2 != (*it).second.end();) {
+            int32_t linked_id = (*it2);
+            // Remove linked id if node was removed
+            if (linked_id == row) {
+                it2 = (*it).second.erase(it2);
+                continue;
+            }
+
+            // Update the link id if it's above the row value
+            if (linked_id > row) {
+                (*it2) = linked_id - 1;
+            }
+
+            ++it2;
+        }
+
+        ++it;
+    }
+
+    // Update the stats data
+    for (NodeSkillData::iterator it = _node_data.stats_data.begin();
+            it != _node_data.stats_data.end();) {
+
+        int32_t node_id = (*it).first;
+        if (node_id == row) {
+            it = _node_data.stats_data.erase(it);
+            continue;
+        }
+
+        if (node_id > row) {
+            (*it).first = node_id - 1;
+        }
+
+        ++it;
+    }
+
+    // Update the items data
+    for (NodeSkillData::iterator it = _node_data.items_data.begin();
+            it != _node_data.items_data.end();) {
+
+        int32_t node_id = (*it).first;
+        if (node_id == row) {
+            it = _node_data.items_data.erase(it);
+            continue;
+        }
+
+        if (node_id > row) {
+            (*it).first = node_id - 1;
+        }
+
+        ++it;
+    }
+
+    return true;
+}
+
 void NodeModel::addLink(int32_t start_id, int32_t end_id)
 {
     for (NodeLinksData& link_pair : _node_data.node_links) {
