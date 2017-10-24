@@ -17,10 +17,10 @@
 class GraphScene;
 
 //! \brief Unfound node row id
-const int32_t UNFOUND_NODE = -1;
+const int32_t UnfoundNode = -1;
 
 //! \brief DEFAULT Search area for nodes coords in pixels
-const uint32_t DEFAULT_SEARCH_AREA = 10;
+const uint32_t DefaultSearchArea = 10;
 
 //! \brief Handler of all skill node operation in the table view
 class SkillNodesTable : public QTableView
@@ -58,7 +58,7 @@ public:
     //! if found, or UNFOUND_NODE if not.
     //! \param the search zone is in pixels around the center of the given point.
     int32_t findNode(uint32_t x, uint32_t y,
-                     uint32_t search_zone = DEFAULT_SEARCH_AREA);
+                     uint32_t search_zone = DefaultSearchArea);
 
     //! \brief Update the node coordinates if the node exists
     void setNodeRowCoord(int32_t row_id, uint32_t x, uint32_t y);

@@ -144,7 +144,7 @@ int32_t SkillNodesTable::findNode(uint32_t x,
             return index.row();
         }
     }
-    return UNFOUND_NODE;
+    return UnfoundNode;
 }
 
 void SkillNodesTable::setNodeRowCoord(int32_t row_id, uint32_t x, uint32_t y)

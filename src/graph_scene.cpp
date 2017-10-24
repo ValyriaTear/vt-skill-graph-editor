@@ -18,7 +18,7 @@
 // Maybe later use resizable scene and grid size (in pixels).
 const uint32_t SCENE_SIZE = 2000;
 const uint32_t GRID_SIZE = 50;
-const uint32_t NODE_SIZE = 10;
+const uint32_t NodeSize = 10;
 
 //! \brief The data id of the Graphics item that stores the node id.
 const int ITEM_ID_KEY = 0;
@@ -51,8 +51,8 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     int32_t y = event->scenePos().y();
 
     if (event->button() == Qt::LeftButton) {
-        int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
-        if (node_row != UNFOUND_NODE) {
+        int32_t node_row = _node_handler->findNode(x, y, NodeSize);
+        if (node_row != UnfoundNode) {
             // Select node if mouse is hovering it
             // Add link to other node if another node is already selected.
             _node_handler->selectNodeAndRow(node_row);
@@ -70,8 +70,8 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     else if (event->button() == Qt::RightButton) {
         // Find the node and remove it if it exists.
-        int32_t node_row = _node_handler->findNode(x, y, NODE_SIZE);
-        if (node_row != UNFOUND_NODE)
+        int32_t node_row = _node_handler->findNode(x, y, NodeSize);
+        if (node_row != UnfoundNode)
             _node_handler->removeNodeRow(node_row);
         // TODO: Fix links as ids above 'node_row' will be screwed
     }
@@ -87,8 +87,8 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     // If dragging using left button,
     if (event->buttons() & Qt::LeftButton) {
         // Try and drag the hovered node
-        int32_t node_row = _node_handler->findNode(last_x, last_y, NODE_SIZE);
-        if (node_row != UNFOUND_NODE) {
+        int32_t node_row = _node_handler->findNode(last_x, last_y, NodeSize);
+        if (node_row != UnfoundNode) {
             // Move the node to new pos
             _node_handler->setNodeRowCoord(node_row, x, y);
         }
@@ -97,10 +97,10 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void GraphScene::addNode(int32_t id, uint32_t x, uint32_t y, bool selected)
 {
-    QGraphicsItem* item = addEllipse(x - NODE_SIZE / 2,
-                                     y - NODE_SIZE / 2,
-                                     NODE_SIZE,
-                                     NODE_SIZE,
+    QGraphicsItem* item = addEllipse(x - NodeSize / 2,
+                                     y - NodeSize / 2,
+                                     NodeSize,
+                                     NodeSize,
                                      QPen(selected ? Qt::blue : Qt::white));
     item->setData(ITEM_ID_KEY, QVariant::fromValue(id));
     QGraphicsTextItem* text = addText(QString::number(id));
