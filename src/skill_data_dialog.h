@@ -18,9 +18,12 @@
 class QTabWidget;
 class QDialogButtonBox;
 class QTableView;
+class QLineEdit;
+class QLabel;
 
 class StatsTab;
 class ItemsTab;
+class IconFileTab;
 
 //! \brief Handler of all skill data edition for a given node
 class SkillDataDialog : public QDialog
@@ -35,11 +38,13 @@ public:
 
     //! \brief Loads node data into dialog
     void loadData(const SkillData& stats_data,
-                  const SkillData& items_data);
+                  const SkillData& items_data,
+                  const QString& icon_filename);
 
     //! \brief Gets a copy of updated data from dialog
     void getData(SkillData& stats_data,
-                 SkillData& items_data) const;
+                 SkillData& items_data,
+                 QString& icon_filename) const;
 
 private:
     //! \brief Tab widget separating both data types
@@ -51,6 +56,7 @@ private:
     //! \brief References to tab containers. Do not delete them.
     StatsTab* _stats_tab;
     ItemsTab* _items_tab;
+    IconFileTab* _icon_tab;
 };
 
 class StatsTab : public QWidget
@@ -109,6 +115,30 @@ private:
 
     //! \brief The table view model. Do not delete it.
     QStandardItemModel* _model;
+};
+
+class IconFileTab : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit IconFileTab(QWidget* parent = Q_NULLPTR);
+    ~IconFileTab()
+    {}
+
+    //! \brief Loads filename into dialog
+    void loadData(const QString& icon_filename);
+
+    //! \brief Gets updated filename from dialog
+    QString getData() const;
+
+private:
+    //! \brief Icon filename
+    QString _icon_filename;
+
+    //! \brief The line edit control references. Do not delete them.
+    QLabel* _filename_title;
+    QLineEdit* _filename_edit;
 };
 
 #endif // SKILL_DATA_DIALOG_H

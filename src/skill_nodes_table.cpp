@@ -183,13 +183,15 @@ void SkillNodesTable::clicked(const QModelIndex& index)
         SkillDataDialog data_dialog(QString::number(node_id + 1), this);
         // Load current data state into dialog
         data_dialog.loadData(_model->getNodeStatsData(node_id),
-                             _model->getNodeItemsData(node_id));
+                             _model->getNodeItemsData(node_id),
+                             _model->getNodeIconFilename(node_id));
         if (data_dialog.exec()) {
             // Set data back in the common ones
             SkillData stats_data;
             SkillData items_data;
-            data_dialog.getData(stats_data, items_data);
-            _model->updateNodeData(node_id, stats_data, items_data);
+            QString icon_filename;
+            data_dialog.getData(stats_data, items_data, icon_filename);
+            _model->updateNodeData(node_id, stats_data, items_data, icon_filename);
         }
         break;
     }

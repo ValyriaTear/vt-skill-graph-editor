@@ -10,6 +10,7 @@
 #include "node_model.h"
 
 const SkillData EmptySkillData = SkillData();
+const QString EmptyQString = QString();
 
 NodeModel::NodeModel(QObject* parent):
     QStandardItemModel(parent)
@@ -83,6 +84,23 @@ bool NodeModel::removeRow(int row, const QModelIndex& parent)
         int32_t node_id = (*it).first;
         if (node_id == row) {
             it = _node_data.items_data.erase(it);
+            continue;
+        }
+
+        if (node_id > row) {
+            (*it).first = node_id - 1;
+        }
+
+        ++it;
+    }
+
+    // Update the icon data
+    for (std::vector<std::pair<int32_t, QString>>::iterator it = _node_data.icon_filenames.begin();
+            it != _node_data.icon_filenames.end();) {
+
+        int32_t node_id = (*it).first;
+        if (node_id == row) {
+            it = _node_data.icon_filenames.erase(it);
             continue;
         }
 
@@ -167,11 +185,38 @@ const SkillData& NodeModel::getNodeItemsData(int32_t node_id) const
     return EmptySkillData;
 }
 
+const QString& NodeModel::getNodeIconFilename(int32_t node_id) const
+{
+    // Search the node id
+    for (const auto& data : _node_data.icon_filenames) {
+        if (data.first != node_id)
+            continue;
+        // Get the data if found
+        return data.second;
+    }
+    return EmptyQString;
+}
+
 void NodeModel::updateNodeData(int32_t node_id,
                                const SkillData& stats_data,
-                               const SkillData& items_data)
+                               const SkillData& items_data,
+                               const QString& icon_filename)
 {
     bool found = false;
+    for (auto& icon_data_pair : _node_data.icon_filenames) {
+        int32_t id = icon_data_pair.first;
+        if (id != node_id)
+            continue;
+
+        found = true;
+        icon_data_pair.second = icon_filename;
+    }
+    // Adds the data if it was never added before
+    if (!found) {
+        _node_data.icon_filenames.push_back(std::pair<int32_t, QString>(node_id, icon_filename));
+    }
+
+    found = false;
     for (auto& stats_data_pair : _node_data.stats_data) {
         int32_t id = stats_data_pair.first;
         if (id != node_id)

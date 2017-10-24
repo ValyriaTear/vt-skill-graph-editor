@@ -13,6 +13,8 @@
 #include <vector>
 #include <cstdint>
 
+#include <QString>
+
 //! \brief Links between nodes
 //! node id; vector of linked ids.
 using NodeLinksData = std::pair<int32_t, std::vector<int32_t> >;
@@ -36,6 +38,9 @@ struct NodeData {
 
     //!  \brief Lists of stats bonuses
     std::vector<NodeLinksData> node_links;
+
+    //! \brief Node icon filenames
+    std::vector<std::pair<int32_t, QString> > icon_filenames;
 };
 
 #endif // NODE_DATA_H

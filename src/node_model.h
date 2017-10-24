@@ -55,11 +55,13 @@ public:
     //! for the given node id
     const SkillData& getNodeStatsData(int32_t node_id) const;
     const SkillData& getNodeItemsData(int32_t node_id) const;
+    const QString& getNodeIconFilename(int32_t node_id) const;
 
     //! \brief Updates items and stats data for the given node
     void updateNodeData(int32_t node_id,
                         const SkillData& stats_data,
-                        const SkillData& items_data);
+                        const SkillData& items_data,
+                        const QString& icon_filename);
 
 private slots:
     //! \brief Triggered for each changed items in the model

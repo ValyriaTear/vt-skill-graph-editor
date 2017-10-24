@@ -15,6 +15,8 @@
 #include <QSplitter>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QLineEdit>
+#include <QLabel>
 
 SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     QDialog(parent),
@@ -22,14 +24,17 @@ SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     _button_box(new QDialogButtonBox(QDialogButtonBox::Ok
                                     | QDialogButtonBox::Cancel)),
     _stats_tab(nullptr),
-    _items_tab(nullptr)
+    _items_tab(nullptr),
+    _icon_tab(nullptr)
 {
     setWindowTitle(tr("Node %1 data").arg(node_id));
 
     _stats_tab = new StatsTab(_tab_widget);
     _items_tab = new ItemsTab(_tab_widget);
+    _icon_tab = new IconFileTab(_tab_widget);
     _tab_widget->addTab(_stats_tab, tr("Stats & Icon"));
     _tab_widget->addTab(_items_tab, tr("Needed Items"));
+    _tab_widget->addTab(_icon_tab, tr("Icon Filename"));
 
     // Link button box
     connect(_button_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -50,17 +55,21 @@ SkillDataDialog::~SkillDataDialog()
 }
 
 void SkillDataDialog::loadData(const SkillData& stats_data,
-                               const SkillData& items_data)
+                               const SkillData& items_data,
+                               const QString& icon_filename)
 {
     _stats_tab->loadData(stats_data);
     _items_tab->loadData(items_data);
+    _icon_tab->loadData(icon_filename);
 }
 
 void SkillDataDialog::getData(SkillData& stats_data,
-                              SkillData& items_data) const
+                              SkillData& items_data,
+                              QString& icon_filename) const
 {
     stats_data = _stats_tab->getData();
     items_data = _items_tab->getData();
+    icon_filename = _icon_tab->getData();
 }
 
 // Item tab
@@ -249,4 +258,29 @@ SkillData StatsTab::getData() const
         data.push_back(DataPair(id, bonus));
     }
     return data;
+}
+
+// Icon filename tab
+
+IconFileTab::IconFileTab(QWidget* parent)
+    : QWidget(parent),
+      _filename_title(new QLabel(tr("Icon Filename:"), this)),
+      _filename_edit(new QLineEdit(this))
+{
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    mainLayout->addWidget(_filename_title);
+    mainLayout->addWidget(_filename_edit);
+    mainLayout->addStretch(1);
+
+    setLayout(mainLayout);
+}
+
+void IconFileTab::loadData(const QString& icon_filename)
+{
+    _filename_edit->setText(icon_filename);
+}
+
+QString IconFileTab::getData() const
+{
+    return _filename_edit->text();
 }
