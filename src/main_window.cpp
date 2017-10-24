@@ -97,11 +97,11 @@ void MainWindow::appendNodeRow()
 
 void MainWindow::removeNodeRow()
 {
-    QModelIndexList indexList = _nodes_table->selectionModel()->selectedIndexes();
+    QModelIndexList index_list = _nodes_table->selectionModel()->selectedIndexes();
     // Multiple rows can be selected
-    for(int32_t i = 0; i < indexList.count(); ++i)
+    for(int32_t i = 0; i < index_list.count(); ++i)
     {
-        QModelIndex index = indexList.at(i);
+        QModelIndex index = index_list.at(i);
         _nodes_table->removeNodeRow(index.row());
     }
 }

@@ -39,7 +39,8 @@ HEADERS += \
     src/graph_scene.h \
     src/node_model.h \
     src/skill_nodes_table.h \
-    src/skill_data_dialog.h
+    src/skill_data_dialog.h \
+    src/node_data.h
 
 FORMS +=
 

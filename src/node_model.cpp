@@ -18,7 +18,7 @@ NodeModel::NodeModel(QObject* parent):
 
 void NodeModel::addLink(int32_t start_id, int32_t end_id)
 {
-    for (node_links_data& link_pair : _node_links) {
+    for (node_links_data& link_pair : _node_data.node_links) {
         if (start_id != link_pair.first)
             continue;
 
@@ -32,8 +32,8 @@ void NodeModel::addLink(int32_t start_id, int32_t end_id)
         links.push_back(end_id);
     }
     // The node does have a link from the start node yet
-    _node_links.push_back(std::pair<int32_t, std::vector<int32_t> >(start_id, std::vector<int32_t>()));
-    _node_links.back().second.push_back(end_id);
+    _node_data.node_links.push_back(std::pair<int32_t, std::vector<int32_t> >(start_id, std::vector<int32_t>()));
+    _node_data.node_links.back().second.push_back(end_id);
 }
 
 void NodeModel::onItemChanged(QStandardItem* item)

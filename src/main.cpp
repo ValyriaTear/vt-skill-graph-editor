@@ -11,7 +11,7 @@
 
 #include <QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
     app.setApplicationName("VT - Skill Graph Editor");

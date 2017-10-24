@@ -10,9 +10,9 @@
 #ifndef NODE_MODEL_H
 #define NODE_MODEL_H
 
-#include <QStandardItemModel>
+#include "node_data.h"
 
-using node_links_data = std::pair<int32_t, std::vector<int32_t> >;
+#include <QStandardItemModel>
 
 //! \brief the nodes table view column ids
 enum NodesTableIds : int32_t {
@@ -46,7 +46,7 @@ public:
 
     //! \brief Provide reference to node links
     const std::vector<node_links_data>& getNodeLinks() const {
-        return _node_links;
+        return _node_data.node_links;
     }
 
 private slots:
@@ -54,9 +54,8 @@ private slots:
     void onItemChanged(QStandardItem* item);
 
 private:
-    //! \brief List of node links
-    //! pair of node id: list of linked ids.
-    std::vector<node_links_data> _node_links;
+    //! \brief Nodes specific data
+    node_data _node_data;
 };
 
 #endif // NODE_MODEL_H

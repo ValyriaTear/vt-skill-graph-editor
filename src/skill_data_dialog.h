@@ -10,6 +10,8 @@
 #ifndef SKILL_DATA_DIALOG_H
 #define SKILL_DATA_DIALOG_H
 
+#include "node_data.h"
+
 #include <QDialog>
 #include <QStandardItem>
 
@@ -19,14 +21,6 @@ class QTableView;
 
 class StatsTab;
 class ItemsTab;
-
-using skill_data = std::pair<int32_t, int32_t>;
-
-//! \brief The node contained data
-struct node_data {
-    std::vector<skill_data> statsData;
-    std::vector<skill_data> itemData;
-};
 
 //! \brief Handler of all skill data edition for a given node
 class SkillDataDialog : public QDialog
@@ -47,14 +41,14 @@ public:
 
 private:
     //! \brief Tab widget separating both data types
-    QTabWidget* _tabWidget;
+    QTabWidget* _tab_widget;
 
     //! \brief Accept / Cancel button pair
-    QDialogButtonBox* _buttonBox;
+    QDialogButtonBox* _button_box;
 
     //! \brief References to tab containers. Do not delete them.
-    StatsTab* _statsTab;
-    ItemsTab* _itemsTab;
+    StatsTab* _stats_tab;
+    ItemsTab* _items_tab;
 };
 
 class StatsTab : public QWidget
@@ -80,7 +74,7 @@ private slots:
 
 private:
     //! \brief Table view containing stats data
-    QTableView* _statsTableView;
+    QTableView* _stats_table_view;
 
     //! \brief The table view model. Do not delete it.
     QStandardItemModel* _model;
@@ -109,7 +103,7 @@ private slots:
 
 private:
     //! \brief Table view containing items data
-    QTableView* _itemsTableView;
+    QTableView* _items_table_view;
 
     //! \brief The table view model. Do not delete it.
     QStandardItemModel* _model;

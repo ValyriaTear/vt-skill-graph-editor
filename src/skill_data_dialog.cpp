@@ -18,57 +18,57 @@
 
 SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     QDialog(parent),
-    _tabWidget(new QTabWidget()),
-    _buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok
+    _tab_widget(new QTabWidget()),
+    _button_box(new QDialogButtonBox(QDialogButtonBox::Ok
                                     | QDialogButtonBox::Cancel)),
-    _statsTab(nullptr),
-    _itemsTab(nullptr)
+    _stats_tab(nullptr),
+    _items_tab(nullptr)
 {
     setWindowTitle(tr("Node %1 data").arg(node_id));
 
-    _statsTab = new StatsTab(_tabWidget);
-    _itemsTab = new ItemsTab(_tabWidget);
-    _tabWidget->addTab(_statsTab, tr("Stats & Icon"));
-    _tabWidget->addTab(_itemsTab, tr("Needed Items"));
+    _stats_tab = new StatsTab(_tab_widget);
+    _items_tab = new ItemsTab(_tab_widget);
+    _tab_widget->addTab(_stats_tab, tr("Stats & Icon"));
+    _tab_widget->addTab(_items_tab, tr("Needed Items"));
 
     // Link button box
-    connect(_buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    connect(_buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(_button_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(_button_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(_tabWidget);
-    mainLayout->addWidget(_buttonBox);
-    setLayout(mainLayout);
+    QVBoxLayout* main_layout = new QVBoxLayout;
+    main_layout->addWidget(_tab_widget);
+    main_layout->addWidget(_button_box);
+    setLayout(main_layout);
 
     resize(300, 300);
 }
 
 SkillDataDialog::~SkillDataDialog()
 {
-    delete _tabWidget;
-    delete _buttonBox;
+    delete _tab_widget;
+    delete _button_box;
 }
 
 node_data SkillDataDialog::getData() const
 {
-    node_data nodeData;
-    nodeData.itemData = _itemsTab->getData();
-    nodeData.statsData = _statsTab->getData();
-    return nodeData;
+    node_data node_data;
+    node_data.item_data = _items_tab->getData();
+    node_data.stats_data = _stats_tab->getData();
+    return node_data;
 }
 
 // Item tab
 
 ItemsTab::ItemsTab(QWidget* parent)
     : QWidget(parent),
-      _itemsTableView(new QTableView(this)),
+      _items_table_view(new QTableView(this)),
       _model(nullptr)
 {
     // Set the table view model
-    QItemSelectionModel* oldModel = _itemsTableView->selectionModel();
-    _model = new QStandardItemModel(_itemsTableView);
-    _itemsTableView->setModel(_model);
-    delete oldModel;
+    QItemSelectionModel* old_model = _items_table_view->selectionModel();
+    _model = new QStandardItemModel(_items_table_view);
+    _items_table_view->setModel(_model);
+    delete old_model;
 
     // N.B.: The model takes ownership of the data
     _model->setHorizontalHeaderLabels(QStringList()
@@ -91,17 +91,17 @@ ItemsTab::ItemsTab(QWidget* parent)
     connect(button, SIGNAL(clicked(bool)), this, SLOT(removeRow()));
     button_splitter->addWidget(button);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(_itemsTableView);
-    mainLayout->addWidget(button_splitter);
-    mainLayout->addStretch(1);
+    QVBoxLayout* main_layout = new QVBoxLayout();
+    main_layout->addWidget(_items_table_view);
+    main_layout->addWidget(button_splitter);
+    main_layout->addStretch(1);
 
-    setLayout(mainLayout);
+    setLayout(main_layout);
 }
 
 ItemsTab::~ItemsTab()
 {
-    delete _itemsTableView;
+    delete _items_table_view;
 }
 
 void ItemsTab::appendRow(int32_t item_id, int32_t item_number)
@@ -114,11 +114,11 @@ void ItemsTab::appendRow(int32_t item_id, int32_t item_number)
 
 void ItemsTab::removeRow()
 {
-    QModelIndexList indexList = _itemsTableView->selectionModel()->selectedIndexes();
+    QModelIndexList index_list = _items_table_view->selectionModel()->selectedIndexes();
     // Multiple rows can be selected
-    for(int32_t i = 0; i < indexList.count(); ++i)
+    for(int32_t i = 0; i < index_list.count(); ++i)
     {
-        QModelIndex index = indexList.at(i);
+        QModelIndex index = index_list.at(i);
         _model->removeRow(index.row());
     }
 }
@@ -152,14 +152,14 @@ std::vector<skill_data> ItemsTab::getData() const
 
 StatsTab::StatsTab(QWidget* parent)
     : QWidget(parent),
-      _statsTableView(new QTableView()),
+      _stats_table_view(new QTableView()),
       _model(nullptr)
 {
     // Set the table view model
-    QItemSelectionModel* oldModel = _statsTableView->selectionModel();
-    _model = new QStandardItemModel(_statsTableView);
-    _statsTableView->setModel(_model);
-    delete oldModel;
+    QItemSelectionModel* old_model = _stats_table_view->selectionModel();
+    _model = new QStandardItemModel(_stats_table_view);
+    _stats_table_view->setModel(_model);
+    delete old_model;
 
     // N.B.: The model takes ownership of the data
     _model->setHorizontalHeaderLabels(QStringList()
@@ -183,7 +183,7 @@ StatsTab::StatsTab(QWidget* parent)
     button_splitter->addWidget(button);
 
     QVBoxLayout* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(_statsTableView);
+    mainLayout->addWidget(_stats_table_view);
     mainLayout->addWidget(button_splitter);
     mainLayout->addStretch(1);
 
@@ -192,7 +192,7 @@ StatsTab::StatsTab(QWidget* parent)
 
 StatsTab::~StatsTab()
 {
-    delete _statsTableView;
+    delete _stats_table_view;
 }
 
 void StatsTab::appendRow(int32_t stat_id, int32_t stat_bonus)
@@ -205,11 +205,11 @@ void StatsTab::appendRow(int32_t stat_id, int32_t stat_bonus)
 
 void StatsTab::removeRow()
 {
-    QModelIndexList indexList = _statsTableView->selectionModel()->selectedIndexes();
+    QModelIndexList index_list = _stats_table_view->selectionModel()->selectedIndexes();
     // Multiple rows can be selected
-    for(int32_t i = 0; i < indexList.count(); ++i)
+    for(int32_t i = 0; i < index_list.count(); ++i)
     {
-        QModelIndex index = indexList.at(i);
+        QModelIndex index = index_list.at(i);
         _model->removeRow(index.row());
     }
 }
