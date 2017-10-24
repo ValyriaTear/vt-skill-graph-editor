@@ -49,18 +49,18 @@ SkillDataDialog::~SkillDataDialog()
     delete _button_box;
 }
 
-void SkillDataDialog::loadData(const nodeData& node_data)
+void SkillDataDialog::loadData(const SkillData& stats_data,
+                               const SkillData& items_data)
 {
-    _stats_tab->loadData(node_data.stats_data);
-    _items_tab->loadData(node_data.item_data);
+    _stats_tab->loadData(stats_data);
+    _items_tab->loadData(items_data);
 }
 
-nodeData SkillDataDialog::getData() const
+void SkillDataDialog::getData(SkillData& stats_data,
+                              SkillData& items_data) const
 {
-    nodeData node_data;
-    node_data.item_data = _items_tab->getData();
-    node_data.stats_data = _stats_tab->getData();
-    return node_data;
+    stats_data = _stats_tab->getData();
+    items_data = _items_tab->getData();
 }
 
 // Item tab
@@ -129,17 +129,20 @@ void ItemsTab::removeRow()
     }
 }
 
-void ItemsTab::loadData(const std::vector<skillData>& stat_data)
+void ItemsTab::loadData(const SkillData& items_data)
 {
-    _model->clear();
-    for (const skillData& data : stat_data) {
+    // Clear list, except headers
+    _model->removeRows(0, _model->rowCount());
+
+    // Fill with data
+    for (const DataPair& data : items_data) {
         appendRow(data.first, data.second);
     }
 }
 
-std::vector<skillData> ItemsTab::getData() const
+SkillData ItemsTab::getData() const
 {
-    std::vector<skillData> data;
+    SkillData data;
     for (int32_t i = 0; i < _model->rowCount(); ++i) {
         QStandardItem* item = _model->item(i, 0);
         if (item == nullptr)
@@ -149,7 +152,7 @@ std::vector<skillData> ItemsTab::getData() const
         if (item == nullptr)
             continue;
         int32_t number = item->data(Qt::DisplayRole).toInt();
-        data.push_back(skillData(id, number));
+        data.push_back(DataPair(id, number));
     }
     return data;
 }
@@ -220,17 +223,20 @@ void StatsTab::removeRow()
     }
 }
 
-void StatsTab::loadData(const std::vector<skillData>& stat_data)
+void StatsTab::loadData(const SkillData& stats_data)
 {
-    _model->clear();
-    for (const skillData& data : stat_data) {
+    // Clear list, except headers
+    _model->removeRows(0, _model->rowCount());
+
+    // Fill with data
+    for (const DataPair& data : stats_data) {
         appendRow(data.first, data.second);
     }
 }
 
-std::vector<skillData> StatsTab::getData() const
+SkillData StatsTab::getData() const
 {
-    std::vector<skillData> data;
+    SkillData data;
     for (int32_t i = 0; i < _model->rowCount(); ++i) {
         QStandardItem* item = _model->item(i, 0);
         if (item == nullptr)
@@ -240,7 +246,7 @@ std::vector<skillData> StatsTab::getData() const
         if (item == nullptr)
             continue;
         int32_t bonus = item->data(Qt::DisplayRole).toInt();
-        data.push_back(skillData(id, bonus));
+        data.push_back(DataPair(id, bonus));
     }
     return data;
 }

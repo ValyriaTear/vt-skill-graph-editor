@@ -41,21 +41,23 @@ public:
     virtual ~NodeModel()
     {}
 
-    //! \brief Adds a link between two nodes.
+    //! \brief Adds a link between two nodes
     void addLink(int32_t start_id, int32_t end_id);
 
     //! \brief Provide reference to node links
-    const std::vector<nodeLinksData>& getNodeLinks() const {
+    const std::vector<NodeLinksData>& getNodeLinks() const {
         return _node_data.node_links;
     }
 
-    //! \brief Provide reference to node full data
-    const nodeData& getNodeData() const {
-        return _node_data;
-    }
+    //! \brief Provides reference to node item or stat data
+    //! for the given node id
+    const SkillData& getNodeStatsData(int32_t node_id) const;
+    const SkillData& getNodeItemsData(int32_t node_id) const;
 
-    //! \brief Update items and stats data
-    void updateNodeData(const nodeData& node_data);
+    //! \brief Updates items and stats data for the given node
+    void updateNodeData(int32_t node_id,
+                        const SkillData& stats_data,
+                        const SkillData& items_data);
 
 private slots:
     //! \brief Triggered for each changed items in the model
@@ -63,7 +65,7 @@ private slots:
 
 private:
     //! \brief Nodes specific data
-    nodeData _node_data;
+    NodeData _node_data;
 };
 
 #endif // NODE_MODEL_H

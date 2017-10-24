@@ -34,10 +34,12 @@ public:
     ~SkillDataDialog();
 
     //! \brief Loads node data into dialog
-    void loadData(const nodeData& node_data);
+    void loadData(const SkillData& stats_data,
+                  const SkillData& items_data);
 
     //! \brief Gets a copy of updated data from dialog
-    nodeData getData() const;
+    void getData(SkillData& stats_data,
+                 SkillData& items_data) const;
 
 private:
     //! \brief Tab widget separating both data types
@@ -60,10 +62,10 @@ public:
     ~StatsTab();
 
     //! \brief Loads items data into dialog
-    void loadData(const std::vector<skillData>& stat_data);
+    void loadData(const SkillData& stat_data);
 
     //! \brief Gets a copy of updated item data from dialog
-    std::vector<skillData> getData() const;
+    SkillData getData() const;
 
 private slots:
     //! \brief When Append button is clicked
@@ -89,10 +91,10 @@ public:
     ~ItemsTab();
 
     //! \brief Loads items data into dialog
-    void loadData(const std::vector<skillData>& stat_data);
+    void loadData(const SkillData& items_data);
 
     //! \brief Gets a copy of updated item data from dialog
-    std::vector<skillData> getData() const;
+    SkillData getData() const;
 
 private slots:
     //! \brief When Append button is clicked

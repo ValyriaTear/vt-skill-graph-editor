@@ -9,6 +9,8 @@
 
 #include "node_model.h"
 
+const SkillData EmptySkillData = SkillData();
+
 NodeModel::NodeModel(QObject* parent):
     QStandardItemModel(parent)
 {
@@ -18,7 +20,7 @@ NodeModel::NodeModel(QObject* parent):
 
 void NodeModel::addLink(int32_t start_id, int32_t end_id)
 {
-    for (nodeLinksData& link_pair : _node_data.node_links) {
+    for (NodeLinksData& link_pair : _node_data.node_links) {
         if (start_id != link_pair.first)
             continue;
 
@@ -63,8 +65,59 @@ void NodeModel::onItemChanged(QStandardItem* item)
     }
 }
 
-void NodeModel::updateNodeData(const nodeData& node_data)
+const SkillData& NodeModel::getNodeStatsData(int32_t node_id) const
 {
-    _node_data.item_data = node_data.item_data;
-    _node_data.stats_data = node_data.stats_data;
+    // Search the node id
+    for (const auto& data : _node_data.stats_data) {
+        if (data.first != node_id)
+            continue;
+        // Get the data if found
+        return data.second;
+    }
+    return EmptySkillData;
+}
+
+const SkillData& NodeModel::getNodeItemsData(int32_t node_id) const
+{
+    // Search the node id
+    for (const auto& data : _node_data.items_data) {
+        if (data.first != node_id)
+            continue;
+        // Get the data if found
+        return data.second;
+    }
+    return EmptySkillData;
+}
+
+void NodeModel::updateNodeData(int32_t node_id,
+                               const SkillData& stats_data,
+                               const SkillData& items_data)
+{
+    bool found = false;
+    for (auto& stats_data_pair : _node_data.stats_data) {
+        int32_t id = stats_data_pair.first;
+        if (id != node_id)
+            continue;
+
+        found = true;
+        stats_data_pair.second = stats_data;
+    }
+    // Adds the data if it was never added before
+    if (!found) {
+        _node_data.stats_data.push_back(NodeDataPair(node_id, stats_data));
+    }
+
+    found = false;
+    for (auto& items_data_pair : _node_data.items_data) {
+        int32_t id = items_data_pair.first;
+        if (id != node_id)
+            continue;
+
+        found = true;
+        items_data_pair.second = items_data;
+    }
+    // Adds the data if it was never added before
+    if (!found) {
+        _node_data.items_data.push_back(NodeDataPair(node_id, items_data));
+    }
 }

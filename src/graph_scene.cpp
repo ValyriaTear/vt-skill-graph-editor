@@ -143,7 +143,7 @@ void GraphScene::repaint()
     const NodeModel* model = _node_handler->getData();
     if (model == nullptr)
         return;
-    const std::vector<nodeLinksData>& node_links = model->getNodeLinks();
+    const std::vector<NodeLinksData>& node_links = model->getNodeLinks();
     for (int32_t i = 0; i < model->rowCount(); ++i) {
         QModelIndex index = model->index(i, PositionX, QModelIndex());
         uint32_t node_x = model->data(index).toUInt();
@@ -157,7 +157,7 @@ void GraphScene::repaint()
         addNode(i + 1, node_x, node_y, selected);
 
         // Paint links
-        for (const nodeLinksData& links : node_links) {
+        for (const NodeLinksData& links : node_links) {
             if (links.first != i)
                 continue;
             // if id is found, paint links
