@@ -45,9 +45,17 @@ public:
     void addLink(int32_t start_id, int32_t end_id);
 
     //! \brief Provide reference to node links
-    const std::vector<node_links_data>& getNodeLinks() const {
+    const std::vector<nodeLinksData>& getNodeLinks() const {
         return _node_data.node_links;
     }
+
+    //! \brief Provide reference to node full data
+    const nodeData& getNodeData() const {
+        return _node_data;
+    }
+
+    //! \brief Update items and stats data
+    void updateNodeData(const nodeData& node_data);
 
 private slots:
     //! \brief Triggered for each changed items in the model
@@ -55,7 +63,7 @@ private slots:
 
 private:
     //! \brief Nodes specific data
-    node_data _node_data;
+    nodeData _node_data;
 };
 
 #endif // NODE_MODEL_H

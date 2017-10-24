@@ -15,21 +15,21 @@
 
 //! \brief Links between nodes
 //! node id; vector of linked ids.
-using node_links_data = std::pair<int32_t, std::vector<int32_t> >;
+using nodeLinksData = std::pair<int32_t, std::vector<int32_t> >;
 
 //! \brief Used for items and stats data
-using skill_data = std::pair<int32_t, int32_t>;
+using skillData = std::pair<int32_t, int32_t>;
 
 //! \brief The node combined items ans stats data
-struct node_data {
+struct nodeData {
     //!  \brief Lists of stats bonuses
-    std::vector<skill_data> stats_data;
+    std::vector<skillData> stats_data;
 
     //!  \brief Lists of required items
-    std::vector<skill_data> item_data;
+    std::vector<skillData> item_data;
 
     //!  \brief Lists of stats bonuses
-    std::vector<node_links_data> node_links;
+    std::vector<nodeLinksData> node_links;
 };
 
 #endif // NODE_DATA_H

@@ -18,7 +18,7 @@ NodeModel::NodeModel(QObject* parent):
 
 void NodeModel::addLink(int32_t start_id, int32_t end_id)
 {
-    for (node_links_data& link_pair : _node_data.node_links) {
+    for (nodeLinksData& link_pair : _node_data.node_links) {
         if (start_id != link_pair.first)
             continue;
 
@@ -61,4 +61,10 @@ void NodeModel::onItemChanged(QStandardItem* item)
         case NodesTableIds::Data:
             break;
     }
+}
+
+void NodeModel::updateNodeData(const nodeData& node_data)
+{
+    _node_data.item_data = node_data.item_data;
+    _node_data.stats_data = node_data.stats_data;
 }

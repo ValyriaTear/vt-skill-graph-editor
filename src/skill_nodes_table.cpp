@@ -179,10 +179,13 @@ void SkillNodesTable::clicked(const QModelIndex& index)
         break;
     case NodesTableIds::Data:
         // Open corresponding edition dialog
-        SkillDataDialog dataDialog(QString::number(item->row() + 1), this);
-        // TODO: Load current data state into dialog
-        if (dataDialog.exec()) {
-            // TODO: Set data back here
+        SkillDataDialog data_dialog(QString::number(item->row() + 1), this);
+        // Load current data state into dialog
+        data_dialog.loadData(_model->getNodeData());
+        if (data_dialog.exec()) {
+            // FIXME: Set data back in the common ones
+            // For now, node data are not stored per node.
+            nodeData new_data = data_dialog.getData();
         }
         break;
     }
