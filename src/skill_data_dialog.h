@@ -11,6 +11,7 @@
 #define SKILL_DATA_DIALOG_H
 
 #include <QDialog>
+#include <QStandardItem>
 
 class QTabWidget;
 class QDialogButtonBox;
@@ -31,9 +32,11 @@ private slots:
 
 
 private:
+    //! \brief Tab widget separating both data types
     QTabWidget* _tabWidget;
-    QDialogButtonBox* _buttonBox;
 
+    //! \brief Accept / Cancel button pair
+    QDialogButtonBox* _buttonBox;
 };
 
 class StatsTab : public QWidget
@@ -44,8 +47,19 @@ public:
     explicit StatsTab(QWidget* parent = Q_NULLPTR);
     ~StatsTab();
 
+private slots:
+    //! \brief When Append button is clicked
+    void appendRow();
+
+    //! \brief When Remove button is clicked
+    void removeRow();
+
 private:
+    //! \brief table view containing stats data
     QTableView* _statsTableView;
+
+    //! \brief The table view model. Do not delete it.
+    QStandardItemModel* _model;
 };
 
 class ItemsTab : public QWidget
@@ -56,8 +70,19 @@ public:
     explicit ItemsTab(QWidget* parent = Q_NULLPTR);
     ~ItemsTab();
 
+private slots:
+    //! \brief When Append button is clicked
+    void appendRow();
+
+    //! \brief When Remove button is clicked
+    void removeRow();
+
 private:
+    //! \brief table view containing items data
     QTableView* _itemsTableView;
+
+    //! \brief The table view model. Do not delete it.
+    QStandardItemModel* _model;
 };
 
 #endif // SKILL_DATA_DIALOG_H

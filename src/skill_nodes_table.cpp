@@ -79,6 +79,7 @@ void SkillNodesTable::setRowFormat(int32_t row)
                 }
                 item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
                 item->setBackground(QBrush(QColor(125, 125, 125, 125)));
+                item->setData(QVariant(tr("Click to edit")), Qt::DisplayRole);
             }
         }
     }
@@ -122,7 +123,6 @@ void SkillNodesTable::selectNodeAndRow(int32_t row_id)
     // Center table on row
     if (row_id != -1)
         selectRow(row_id);
-
 }
 
 int32_t SkillNodesTable::findNode(uint32_t x,
