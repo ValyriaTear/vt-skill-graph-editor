@@ -20,12 +20,16 @@ SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     QDialog(parent),
     _tabWidget(new QTabWidget()),
     _buttonBox(new QDialogButtonBox(QDialogButtonBox::Ok
-                                    | QDialogButtonBox::Cancel))
+                                    | QDialogButtonBox::Cancel)),
+    _statsTab(nullptr),
+    _itemsTab(nullptr)
 {
     setWindowTitle(tr("Node %1 data").arg(node_id));
 
-    _tabWidget->addTab(new StatsTab(_tabWidget), tr("Stats & Icon"));
-    _tabWidget->addTab(new ItemsTab(_tabWidget), tr("Needed Items"));
+    _statsTab = new StatsTab(_tabWidget);
+    _itemsTab = new ItemsTab(_tabWidget);
+    _tabWidget->addTab(_statsTab, tr("Stats & Icon"));
+    _tabWidget->addTab(_itemsTab, tr("Needed Items"));
 
     // Link button box
     connect(_buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -43,6 +47,14 @@ SkillDataDialog::~SkillDataDialog()
 {
     delete _tabWidget;
     delete _buttonBox;
+}
+
+node_data SkillDataDialog::getData() const
+{
+    node_data nodeData;
+    nodeData.itemData = _itemsTab->getData();
+    nodeData.statsData = _statsTab->getData();
+    return nodeData;
 }
 
 // Item tab
@@ -92,12 +104,12 @@ ItemsTab::~ItemsTab()
     delete _itemsTableView;
 }
 
-void ItemsTab::appendRow()
+void ItemsTab::appendRow(int32_t item_id, int32_t item_number)
 {
     // N.B.: The model takes ownership of the data
     _model->appendRow(QList<QStandardItem*>()
-                      << new QStandardItem(QString::number(0))
-                      << new QStandardItem(QString::number(0)));
+                      << new QStandardItem(QString::number(item_id))
+                      << new QStandardItem(QString::number(item_number)));
 }
 
 void ItemsTab::removeRow()
@@ -109,6 +121,31 @@ void ItemsTab::removeRow()
         QModelIndex index = indexList.at(i);
         _model->removeRow(index.row());
     }
+}
+
+void ItemsTab::loadData(const std::vector<skill_data>& stat_data)
+{
+    _model->clear();
+    for (const skill_data& data : stat_data) {
+        appendRow(data.first, data.second);
+    }
+}
+
+std::vector<skill_data> ItemsTab::getData() const
+{
+    std::vector<skill_data> data;
+    for (int32_t i = 0; i < _model->rowCount(); ++i) {
+        QStandardItem* item = _model->item(i, 0);
+        if (item == nullptr)
+            continue;
+        int32_t id = item->data(Qt::DisplayRole).toInt();
+        item = _model->item(i, 1);
+        if (item == nullptr)
+            continue;
+        int32_t number = item->data(Qt::DisplayRole).toInt();
+        data.push_back(skill_data(id, number));
+    }
+    return data;
 }
 
 // Stats tab
@@ -158,12 +195,12 @@ StatsTab::~StatsTab()
     delete _statsTableView;
 }
 
-void StatsTab::appendRow()
+void StatsTab::appendRow(int32_t stat_id, int32_t stat_bonus)
 {
     // N.B.: The model takes ownership of the data
     _model->appendRow(QList<QStandardItem*>()
-                      << new QStandardItem(QString::number(0))
-                      << new QStandardItem(QString::number(0)));
+                      << new QStandardItem(QString::number(stat_id))
+                      << new QStandardItem(QString::number(stat_bonus)));
 }
 
 void StatsTab::removeRow()
@@ -175,4 +212,29 @@ void StatsTab::removeRow()
         QModelIndex index = indexList.at(i);
         _model->removeRow(index.row());
     }
+}
+
+void StatsTab::loadData(const std::vector<skill_data>& stat_data)
+{
+    _model->clear();
+    for (const skill_data& data : stat_data) {
+        appendRow(data.first, data.second);
+    }
+}
+
+std::vector<skill_data> StatsTab::getData() const
+{
+    std::vector<skill_data> data;
+    for (int32_t i = 0; i < _model->rowCount(); ++i) {
+        QStandardItem* item = _model->item(i, 0);
+        if (item == nullptr)
+            continue;
+        int32_t id = item->data(Qt::DisplayRole).toInt();
+        item = _model->item(i, 1);
+        if (item == nullptr)
+            continue;
+        int32_t bonus = item->data(Qt::DisplayRole).toInt();
+        data.push_back(skill_data(id, bonus));
+    }
+    return data;
 }
