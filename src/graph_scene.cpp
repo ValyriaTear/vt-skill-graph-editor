@@ -142,36 +142,32 @@ void GraphScene::repaint()
     const NodeModel* model = _node_handler->getData();
     if (model == nullptr)
         return;
-    const std::vector<NodeLinksData>& node_links = model->getNodeLinks();
-    for (int32_t i = 0; i < model->rowCount(); ++i) {
-        QModelIndex index = model->index(i, PositionX, QModelIndex());
+
+    for (int32_t id = 0; id < model->rowCount(); ++id) {
+        QModelIndex index = model->index(id, PositionX, QModelIndex());
         uint32_t node_x = model->data(index).toUInt();
-        index = model->index(i, PositionY, QModelIndex());
+        index = model->index(id, PositionY, QModelIndex());
         uint32_t node_y = model->data(index).toUInt();
 
         if (node_x == 0 || node_y == 0)
             continue;
 
-        bool selected = (i == _node_handler->getSelectedNodeId());
-        addNode(i + 1, node_x, node_y, selected);
+        bool selected = (id == _node_handler->getSelectedNodeId());
+        addNode(id + 1, node_x, node_y, selected);
 
         // Paint links
-        for (const NodeLinksData& links : node_links) {
-            if (links.first != i)
-                continue;
-            // if id is found, paint links
-            for (int32_t link_id : links.second) {
-                // Get link position
-                QModelIndex dest_index = model->index(link_id, PositionX, QModelIndex());
-                uint32_t dest_x = model->data(dest_index).toUInt();
-                dest_index = model->index(link_id, PositionY, QModelIndex());
-                uint32_t dest_y = model->data(dest_index).toUInt();
+        const NodeData& node_data = model->getNodeData(id);
+        for (int32_t link_id : node_data.node_links) {
+            // Get link position
+            QModelIndex dest_index = model->index(link_id, PositionX, QModelIndex());
+            uint32_t dest_x = model->data(dest_index).toUInt();
+            dest_index = model->index(link_id, PositionY, QModelIndex());
+            uint32_t dest_y = model->data(dest_index).toUInt();
 
-                if (dest_x == 0 || dest_y == 0)
-                    continue;
-                // Draw link line
-                addLine(node_x, node_y, dest_x, dest_y, QPen(Qt::blue));
-            }
+            if (dest_x == 0 || dest_y == 0)
+                continue;
+            // Draw link line
+            addLine(node_x, node_y, dest_x, dest_y, QPen(Qt::blue));
         }
     }
 }

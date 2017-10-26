@@ -16,31 +16,32 @@
 #include <QString>
 
 //! \brief Links between nodes
-//! node id; vector of linked ids.
-using NodeLinksData = std::pair<int32_t, std::vector<int32_t> >;
+//! vector of linked ids.
+using NodeLinksData = std::vector<int32_t>;
 
 //! \brief Used for items and stats data
 using DataPair = std::pair<int32_t, int32_t>;
 using SkillData = std::vector<DataPair>;
 
-//! \brief Combines a node id with each data vector.
-using NodeDataPair = std::pair<int32_t, SkillData>;
-using NodeSkillData = std::vector<NodeDataPair>;
-
-//! \brief The node combined items ans stats data
+//! \brief One node specific data
 struct NodeData {
 
+    //! \brief The node id
+    int32_t node_id;
+
     //!  \brief Lists of stats bonuses
-    NodeSkillData stats_data;
+    SkillData stats_data;
 
     //!  \brief Lists of required items
-    NodeSkillData items_data;
+    SkillData items_data;
 
     //!  \brief Lists of stats bonuses
-    std::vector<NodeLinksData> node_links;
+    NodeLinksData node_links;
 
     //! \brief Node icon filenames
-    std::vector<std::pair<int32_t, QString> > icon_filenames;
+    QString icon_filename;
 };
+
+using NodesData = std::vector<NodeData>;
 
 #endif // NODE_DATA_H

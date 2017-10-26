@@ -46,10 +46,8 @@ public:
     //! \brief Adds a link between two nodes
     void addLink(int32_t start_id, int32_t end_id);
 
-    //! \brief Provide reference to node links
-    const std::vector<NodeLinksData>& getNodeLinks() const {
-        return _node_data.node_links;
-    }
+    //! \brief Provide reference to one node data, if available
+    const NodeData& getNodeData(int32_t node_id) const;
 
     //! \brief Provides reference to node item or stat data
     //! for the given node id
@@ -69,7 +67,7 @@ private slots:
 
 private:
     //! \brief Nodes specific data
-    NodeData _node_data;
+    NodesData _nodes_data;
 };
 
 #endif // NODE_MODEL_H

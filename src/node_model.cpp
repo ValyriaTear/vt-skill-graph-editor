@@ -11,6 +11,7 @@
 
 const SkillData EmptySkillData = SkillData();
 const QString EmptyQString = QString();
+const NodeData EmptyNodeData = NodeData();
 
 NodeModel::NodeModel(QObject* parent):
     QStandardItemModel(parent)
@@ -24,88 +25,39 @@ bool NodeModel::removeRow(int row, const QModelIndex& parent)
     if (!QAbstractItemModel::removeRow(row, parent))
         return false;
 
-    // The row was removed, update the link and other node data
-    for (std::vector<NodeLinksData>::iterator it = _node_data.node_links.begin();
-            it != _node_data.node_links.end();) {
-        int32_t node_id = (*it).first;
-        // Remove links of now non existing node
-        if (node_id == row) {
-           it = _node_data.node_links.erase(it);
-           continue;
+    // The row was removed, check each node data
+    for (NodesData::iterator it = _nodes_data.begin();
+            it != _nodes_data.end();) {
+
+        NodeData& node_data = *it;
+        // Remove all information (stats, items, ...) is row data is found
+        if (node_data.node_id == row) {
+            it = _nodes_data.erase(it);
+            continue;
         }
 
-        if (node_id > row) {
-            // If row is below id, decrement the id of links
-            (*it).first = node_id - 1;
+        // Update node ids above the removed row
+        if (node_data.node_id > row) {
+            (*it).node_id--;
         }
 
-        // Also update the links id if above the row value
-        for (std::vector<int32_t>::iterator it2 = (*it).second.begin();
-                it2 != (*it).second.end();) {
+        // Update links data
+        for (NodeLinksData::iterator it2 = node_data.node_links.begin();
+                it2 != node_data.node_links.end();) {
             int32_t linked_id = (*it2);
-            // Remove linked id if node was removed
+            // Remove links of now non existing node
             if (linked_id == row) {
-                it2 = (*it).second.erase(it2);
-                continue;
+               it2 = node_data.node_links.erase(it2);
+               continue;
             }
 
-            // Update the link id if it's above the row value
+            // Also update the links id if above the row value
             if (linked_id > row) {
+                // If row is below id, decrement the id of links
                 (*it2) = linked_id - 1;
             }
 
             ++it2;
-        }
-
-        ++it;
-    }
-
-    // Update the stats data
-    for (NodeSkillData::iterator it = _node_data.stats_data.begin();
-            it != _node_data.stats_data.end();) {
-
-        int32_t node_id = (*it).first;
-        if (node_id == row) {
-            it = _node_data.stats_data.erase(it);
-            continue;
-        }
-
-        if (node_id > row) {
-            (*it).first = node_id - 1;
-        }
-
-        ++it;
-    }
-
-    // Update the items data
-    for (NodeSkillData::iterator it = _node_data.items_data.begin();
-            it != _node_data.items_data.end();) {
-
-        int32_t node_id = (*it).first;
-        if (node_id == row) {
-            it = _node_data.items_data.erase(it);
-            continue;
-        }
-
-        if (node_id > row) {
-            (*it).first = node_id - 1;
-        }
-
-        ++it;
-    }
-
-    // Update the icon data
-    for (std::vector<std::pair<int32_t, QString>>::iterator it = _node_data.icon_filenames.begin();
-            it != _node_data.icon_filenames.end();) {
-
-        int32_t node_id = (*it).first;
-        if (node_id == row) {
-            it = _node_data.icon_filenames.erase(it);
-            continue;
-        }
-
-        if (node_id > row) {
-            (*it).first = node_id - 1;
         }
 
         ++it;
@@ -116,22 +68,28 @@ bool NodeModel::removeRow(int row, const QModelIndex& parent)
 
 void NodeModel::addLink(int32_t start_id, int32_t end_id)
 {
-    for (NodeLinksData& link_pair : _node_data.node_links) {
-        if (start_id != link_pair.first)
+    bool node_found = false;
+    for (NodeData& node_data : _nodes_data) {
+        if (node_data.node_id != start_id)
             continue;
 
-        std::vector<int32_t>& links = link_pair.second;
-        // The node already has a link, add a new one
-        for (int32_t dest_id : links) {
+        node_found = true;
+        // The node already has data, add a new link
+        for (int32_t dest_id : node_data.node_links) {
             // Link already exists
             if (dest_id == end_id)
                 return;
         }
-        links.push_back(end_id);
+        node_data.node_links.push_back(end_id);
+        return;
     }
-    // The node does have a link from the start node yet
-    _node_data.node_links.push_back(std::pair<int32_t, std::vector<int32_t> >(start_id, std::vector<int32_t>()));
-    _node_data.node_links.back().second.push_back(end_id);
+    if (!node_found) {
+        // No data yet, create node data.
+        _nodes_data.push_back(NodeData());
+        NodeData& node_data = _nodes_data.back();
+        node_data.node_id = start_id;
+        node_data.node_links.push_back(end_id);
+    }
 }
 
 void NodeModel::onItemChanged(QStandardItem* item)
@@ -161,14 +119,26 @@ void NodeModel::onItemChanged(QStandardItem* item)
     }
 }
 
+const NodeData& NodeModel::getNodeData(int32_t node_id) const
+{
+    // Search the node id
+    for (const auto& data : _nodes_data) {
+        if (data.node_id != node_id)
+            continue;
+        // Get the data if found
+        return data;
+    }
+    return EmptyNodeData;
+}
+
 const SkillData& NodeModel::getNodeStatsData(int32_t node_id) const
 {
     // Search the node id
-    for (const auto& data : _node_data.stats_data) {
-        if (data.first != node_id)
+    for (const NodeData& data : _nodes_data) {
+        if (data.node_id != node_id)
             continue;
         // Get the data if found
-        return data.second;
+        return data.stats_data;
     }
     return EmptySkillData;
 }
@@ -176,11 +146,11 @@ const SkillData& NodeModel::getNodeStatsData(int32_t node_id) const
 const SkillData& NodeModel::getNodeItemsData(int32_t node_id) const
 {
     // Search the node id
-    for (const auto& data : _node_data.items_data) {
-        if (data.first != node_id)
+    for (const NodeData& data : _nodes_data) {
+        if (data.node_id != node_id)
             continue;
         // Get the data if found
-        return data.second;
+        return data.items_data;
     }
     return EmptySkillData;
 }
@@ -188,11 +158,11 @@ const SkillData& NodeModel::getNodeItemsData(int32_t node_id) const
 const QString& NodeModel::getNodeIconFilename(int32_t node_id) const
 {
     // Search the node id
-    for (const auto& data : _node_data.icon_filenames) {
-        if (data.first != node_id)
+    for (const NodeData& data : _nodes_data) {
+        if (data.node_id != node_id)
             continue;
         // Get the data if found
-        return data.second;
+        return data.icon_filename;
     }
     return EmptyQString;
 }
@@ -202,45 +172,23 @@ void NodeModel::updateNodeData(int32_t node_id,
                                const SkillData& items_data,
                                const QString& icon_filename)
 {
-    bool found = false;
-    for (auto& icon_data_pair : _node_data.icon_filenames) {
-        int32_t id = icon_data_pair.first;
-        if (id != node_id)
+    bool node_found = false;
+    for (NodeData& node_data : _nodes_data) {
+        if (node_data.node_id != node_id)
             continue;
 
-        found = true;
-        icon_data_pair.second = icon_filename;
+        node_found = true;
+        node_data.stats_data = stats_data;
+        node_data.items_data = items_data;
+        node_data.icon_filename = icon_filename;
     }
     // Adds the data if it was never added before
-    if (!found) {
-        _node_data.icon_filenames.push_back(std::pair<int32_t, QString>(node_id, icon_filename));
-    }
-
-    found = false;
-    for (auto& stats_data_pair : _node_data.stats_data) {
-        int32_t id = stats_data_pair.first;
-        if (id != node_id)
-            continue;
-
-        found = true;
-        stats_data_pair.second = stats_data;
-    }
-    // Adds the data if it was never added before
-    if (!found) {
-        _node_data.stats_data.push_back(NodeDataPair(node_id, stats_data));
-    }
-
-    found = false;
-    for (auto& items_data_pair : _node_data.items_data) {
-        int32_t id = items_data_pair.first;
-        if (id != node_id)
-            continue;
-
-        found = true;
-        items_data_pair.second = items_data;
-    }
-    // Adds the data if it was never added before
-    if (!found) {
-        _node_data.items_data.push_back(NodeDataPair(node_id, items_data));
+    if (!node_found) {
+        _nodes_data.push_back(NodeData());
+        NodeData& node_data = _nodes_data.back();
+        node_data.node_id = node_id;
+        node_data.stats_data = stats_data;
+        node_data.items_data = items_data;
+        node_data.icon_filename = icon_filename;
     }
 }
