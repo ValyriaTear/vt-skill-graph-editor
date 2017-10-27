@@ -34,16 +34,16 @@ private slots:
     //! \brief When Remove button is clicked
     void removeNodeRow();
 
+    //! \brief Save the nodes data
+    //! \returns whether the save was successful
+    bool saveData();
+
 private:
     //! \brief Setup main view widgets. Called once at init.
     void setupMainView();
 
-    //! \section Qt standard widgets
-
     //! \brief Main Window UI pointer
     QSplitter* _view_splitter;
-
-    //! \section Custom widgets
 
     //! \brief Skill node handler
     SkillNodesTable* _nodes_table;

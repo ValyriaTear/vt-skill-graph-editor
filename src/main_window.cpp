@@ -8,18 +8,22 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "main_window.h"
-#include "ui_main_window.h"
 
 #include "skill_nodes_table.h"
 #include "graph_scene.h"
+#include "lua_writer.h"
 
 #include <QResizeEvent>
 #include <QSplitter>
 #include <QPushButton>
+#include <QMenuBar>
+#include <QGraphicsView>
+#include <QToolBar>
+#include <QFileDialog>
 
-const int32_t MAIN_WIN_WIDTH = 800;
-const int32_t MAIN_WIN_HEIGHT = 800;
-const int32_t NODE_TABLE_WIDTH = 425;
+const int32_t MainWinWidth = 800;
+const int32_t MainWinHeight = 800;
+const int32_t NodeTableWidth = 425;
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -30,8 +34,11 @@ MainWindow::MainWindow(QWidget* parent) :
     setupMainView();
 
     // TODO: Add real menus on need (open, save, ...)
-    QMenu* file_menu = menuBar()->addMenu("&File");
-    QAction* quit_action = file_menu->addAction(QString("&Quit"));
+    QMenu* file_menu = menuBar()->addMenu(tr("&File"));
+    QAction* save_action = file_menu->addAction(QString(tr("&Save")));
+    QAction* quit_action = file_menu->addAction(QString(tr("&Quit")));
+
+    connect(save_action, SIGNAL(triggered()), this, SLOT(saveData()));
     connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
 }
 
@@ -45,7 +52,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupMainView()
 {
     setWindowTitle(tr("Skill Graph Editor"));
-    resize(MAIN_WIN_WIDTH, MAIN_WIN_HEIGHT);
+    resize(MainWinWidth, MainWinHeight);
 
     _view_splitter = new QSplitter(this);
     _view_splitter->setOrientation(Qt::Horizontal);
@@ -58,8 +65,8 @@ void MainWindow::setupMainView()
 
     // Obtain skill table reference and make it handled by the skill node handler
     _nodes_table = new SkillNodesTable(this);
-    _nodes_table->setMinimumWidth(NODE_TABLE_WIDTH);
-    _nodes_table->setMaximumWidth(NODE_TABLE_WIDTH);
+    _nodes_table->setMinimumWidth(NodeTableWidth);
+    _nodes_table->setMaximumWidth(NodeTableWidth);
     _graph_scene = new GraphScene(graphics_view, _nodes_table);
 
     _view_splitter->addWidget(graphics_view);
@@ -84,7 +91,7 @@ void MainWindow::setupMainView()
     table_splitter->addWidget(node_btn_toolbar);
 
     // Set main widgets sizes
-    _view_splitter->setSizes(QList<int>() << 400 << NODE_TABLE_WIDTH);
+    _view_splitter->setSizes(QList<int>() << 400 << NodeTableWidth);
 
     // Init scene
     _graph_scene->repaint();
@@ -104,4 +111,24 @@ void MainWindow::removeNodeRow()
         QModelIndex index = index_list.at(i);
         _nodes_table->removeNodeRow(index.row());
     }
+}
+
+bool MainWindow::saveData()
+{
+    QString file_path = QFileDialog::getSaveFileName(this,
+                                                     tr("Save Data as ..."),
+                                                     QString(),
+                                                     tr("Lua file (*.lua)"));
+
+    // Wasn't saved, but nothing abnormal
+    if (file_path.isEmpty())
+        return true;
+
+    // Actually save the file now we have its location.
+    const NodeModel* node_model = _nodes_table->getData();
+    if (!node_model)
+        return false;
+
+    LuaWriter writer;
+    return writer.save(file_path, *node_model);
 }

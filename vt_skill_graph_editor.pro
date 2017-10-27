@@ -32,7 +32,8 @@ SOURCES += \
     src/graph_scene.cpp \
     src/node_model.cpp \
     src/skill_nodes_table.cpp \
-    src/skill_data_dialog.cpp
+    src/skill_data_dialog.cpp \
+    src/lua_writer.cpp
 
 HEADERS += \
     src/main_window.h \
@@ -40,7 +41,8 @@ HEADERS += \
     src/node_model.h \
     src/skill_nodes_table.h \
     src/skill_data_dialog.h \
-    src/node_data.h
+    src/node_data.h \
+    src/lua_writer.h
 
 FORMS +=
 
