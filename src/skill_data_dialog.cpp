@@ -34,18 +34,18 @@ SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     _icon_tab = new IconFileTab(_tab_widget);
     _tab_widget->addTab(_stats_tab, tr("Stats & Icon"));
     _tab_widget->addTab(_items_tab, tr("Needed Items"));
-    _tab_widget->addTab(_icon_tab, tr("Icon Filename"));
+    _tab_widget->addTab(_icon_tab, tr("Icon Lua Filename && Skill Earned"));
 
     // Link button box
     connect(_button_box, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(_button_box, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    QVBoxLayout* main_layout = new QVBoxLayout;
+    QVBoxLayout* main_layout = new QVBoxLayout(this);
     main_layout->addWidget(_tab_widget);
     main_layout->addWidget(_button_box);
     setLayout(main_layout);
 
-    resize(300, 300);
+    resize(450, 350);
 }
 
 SkillDataDialog::~SkillDataDialog()
@@ -54,22 +54,20 @@ SkillDataDialog::~SkillDataDialog()
     delete _button_box;
 }
 
-void SkillDataDialog::loadData(const SkillData& stats_data,
-                               const SkillData& items_data,
-                               const QString& icon_filename)
+void SkillDataDialog::loadData(const NodeData& node_data)
 {
-    _stats_tab->loadData(stats_data);
-    _items_tab->loadData(items_data);
-    _icon_tab->loadData(icon_filename);
+    _stats_tab->loadData(node_data.stats_data);
+    _items_tab->loadData(node_data.items_data);
+    _icon_tab->loadData(node_data.icon_filename, node_data.skill_id);
 }
 
-void SkillDataDialog::getData(SkillData& stats_data,
-                              SkillData& items_data,
-                              QString& icon_filename) const
+const NodeData SkillDataDialog::getData() const
 {
-    stats_data = _stats_tab->getData();
-    items_data = _items_tab->getData();
-    icon_filename = _icon_tab->getData();
+    NodeData node_data = NodeData();
+    node_data.stats_data = _stats_tab->getData();
+    node_data.items_data = _items_tab->getData();
+    _icon_tab->getData(node_data.icon_filename, node_data.skill_id);
+    return node_data;
 }
 
 // Item tab
@@ -265,22 +263,31 @@ SkillData StatsTab::getData() const
 IconFileTab::IconFileTab(QWidget* parent)
     : QWidget(parent),
       _filename_title(new QLabel(tr("Icon Filename:"), this)),
-      _filename_edit(new QLineEdit(this))
+      _filename_edit(new QLineEdit(this)),
+      _skill_id_title(new QLabel(tr("Skill Id Learned (-1 <-> 65000):"), this)),
+      _skill_id_edit(new QLineEdit(this))
 {
+    // Permit number only in skill id edit control
+    _skill_id_edit->setValidator(new QIntValidator(-1, 65000, this));
+
     QVBoxLayout* mainLayout = new QVBoxLayout();
     mainLayout->addWidget(_filename_title);
     mainLayout->addWidget(_filename_edit);
+    mainLayout->addWidget(_skill_id_title);
+    mainLayout->addWidget(_skill_id_edit);
     mainLayout->addStretch(1);
 
     setLayout(mainLayout);
 }
 
-void IconFileTab::loadData(const QString& icon_filename)
+void IconFileTab::loadData(const QString& icon_filename, int32_t skill_id)
 {
     _filename_edit->setText(icon_filename);
+    _skill_id_edit->setText(QString::number(skill_id));
 }
 
-QString IconFileTab::getData() const
+void IconFileTab::getData(QString& icon_filename, int32_t& skill_id) const
 {
-    return _filename_edit->text();
+    icon_filename = _filename_edit->text();
+    skill_id = _skill_id_edit->text().toInt();
 }

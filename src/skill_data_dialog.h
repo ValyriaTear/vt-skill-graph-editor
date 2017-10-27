@@ -37,14 +37,10 @@ public:
     ~SkillDataDialog();
 
     //! \brief Loads node data into dialog
-    void loadData(const SkillData& stats_data,
-                  const SkillData& items_data,
-                  const QString& icon_filename);
+    void loadData(const NodeData& node_data);
 
     //! \brief Gets a copy of updated data from dialog
-    void getData(SkillData& stats_data,
-                 SkillData& items_data,
-                 QString& icon_filename) const;
+    const NodeData getData() const;
 
 private:
     //! \brief Tab widget separating both data types
@@ -127,10 +123,10 @@ public:
     {}
 
     //! \brief Loads filename into dialog
-    void loadData(const QString& icon_filename);
+    void loadData(const QString& icon_filename, int32_t skill_id);
 
     //! \brief Gets updated filename from dialog
-    QString getData() const;
+    void getData(QString& icon_filename, int32_t& skill_id) const;
 
 private:
     //! \brief Icon filename
@@ -139,6 +135,8 @@ private:
     //! \brief The line edit control references. Do not delete them.
     QLabel* _filename_title;
     QLineEdit* _filename_edit;
+    QLabel* _skill_id_title;
+    QLineEdit* _skill_id_edit;
 };
 
 #endif // SKILL_DATA_DIALOG_H

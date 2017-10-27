@@ -56,7 +56,7 @@ bool LuaWriter::save(const QString& file_path, const NodeModel& node_model)
         out << "\t\t" << "experience_points_needed = " << xp_cost << "," << endl;
 
         out << "\t\t" << "-- Skill id learned when reaching this node" << endl;
-        out << "\t\t" << "skill_id_learned = " << -1 << "," << endl; // TODO
+        out << "\t\t" << "skill_id_learned = " << node_data.skill_id << "," << endl;
 
         out << "\t\t" << "-- items needed to reach this node" << endl;
         out << "\t\t" << "items_needed = {" << endl;

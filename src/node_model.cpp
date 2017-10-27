@@ -9,8 +9,6 @@
 
 #include "node_model.h"
 
-const SkillData EmptySkillData = SkillData();
-const QString EmptyQString = QString();
 const NodeData EmptyNodeData = NodeData();
 
 NodeModel::NodeModel(QObject* parent):
@@ -131,64 +129,29 @@ const NodeData& NodeModel::getNodeData(int32_t node_id) const
     return EmptyNodeData;
 }
 
-const SkillData& NodeModel::getNodeStatsData(int32_t node_id) const
-{
-    // Search the node id
-    for (const NodeData& data : _nodes_data) {
-        if (data.node_id != node_id)
-            continue;
-        // Get the data if found
-        return data.stats_data;
-    }
-    return EmptySkillData;
-}
-
-const SkillData& NodeModel::getNodeItemsData(int32_t node_id) const
-{
-    // Search the node id
-    for (const NodeData& data : _nodes_data) {
-        if (data.node_id != node_id)
-            continue;
-        // Get the data if found
-        return data.items_data;
-    }
-    return EmptySkillData;
-}
-
-const QString& NodeModel::getNodeIconFilename(int32_t node_id) const
-{
-    // Search the node id
-    for (const NodeData& data : _nodes_data) {
-        if (data.node_id != node_id)
-            continue;
-        // Get the data if found
-        return data.icon_filename;
-    }
-    return EmptyQString;
-}
-
 void NodeModel::updateNodeData(int32_t node_id,
-                               const SkillData& stats_data,
-                               const SkillData& items_data,
-                               const QString& icon_filename)
+                               const NodeData& updated_data)
 {
     bool node_found = false;
     for (NodeData& node_data : _nodes_data) {
         if (node_data.node_id != node_id)
             continue;
 
+        // Update everything except the id
         node_found = true;
-        node_data.stats_data = stats_data;
-        node_data.items_data = items_data;
-        node_data.icon_filename = icon_filename;
+        node_data.stats_data = updated_data.stats_data;
+        node_data.items_data = updated_data.items_data;
+        node_data.icon_filename = updated_data.icon_filename;
+        node_data.skill_id = updated_data.skill_id;
     }
     // Adds the data if it was never added before
     if (!node_found) {
         _nodes_data.push_back(NodeData());
         NodeData& node_data = _nodes_data.back();
         node_data.node_id = node_id;
-        node_data.stats_data = stats_data;
-        node_data.items_data = items_data;
-        node_data.icon_filename = icon_filename;
+        node_data.stats_data = updated_data.stats_data;
+        node_data.items_data = updated_data.items_data;
+        node_data.icon_filename = updated_data.icon_filename;
+        node_data.skill_id = updated_data.skill_id;
     }
 }

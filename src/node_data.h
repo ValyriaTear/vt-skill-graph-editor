@@ -25,6 +25,9 @@ using SkillData = std::vector<DataPair>;
 
 //! \brief One node specific data
 struct NodeData {
+    NodeData():
+        skill_id(-1)
+    {}
 
     //! \brief The node id
     int32_t node_id;
@@ -40,6 +43,9 @@ struct NodeData {
 
     //! \brief Node icon filenames
     QString icon_filename;
+
+    //! \brief Node skill_id
+    int32_t skill_id;
 };
 
 using NodesData = std::vector<NodeData>;

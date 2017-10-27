@@ -49,17 +49,8 @@ public:
     //! \brief Provide reference to one node data, if available
     const NodeData& getNodeData(int32_t node_id) const;
 
-    //! \brief Provides reference to node item or stat data
-    //! for the given node id
-    const SkillData& getNodeStatsData(int32_t node_id) const;
-    const SkillData& getNodeItemsData(int32_t node_id) const;
-    const QString& getNodeIconFilename(int32_t node_id) const;
-
-    //! \brief Updates items and stats data for the given node
-    void updateNodeData(int32_t node_id,
-                        const SkillData& stats_data,
-                        const SkillData& items_data,
-                        const QString& icon_filename);
+    //! \brief Updates items, stats and other specific data for the given node
+    void updateNodeData(int32_t node_id, const NodeData& node_data);
 
 private slots:
     //! \brief Triggered for each changed items in the model
