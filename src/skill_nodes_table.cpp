@@ -17,6 +17,7 @@
 SkillNodesTable::SkillNodesTable(QWidget* parent):
     QTableView(parent),
     _selected_node_id(-1),
+    _data_modified(false),
     _model(nullptr)
 {
     // Decorate the table view
@@ -58,6 +59,8 @@ int32_t SkillNodesTable::appendNodeRow(uint32_t x,
 
     setRowFormat(_model->rowCount() - 1);
 
+    _data_modified = true;
+
     return _model->rowCount();
 }
 
@@ -97,6 +100,8 @@ void SkillNodesTable::removeNodeRow(int32_t row_id)
 
     // Repaint and resync node ids with table view.
     _scene->repaint();
+
+    _data_modified = true;
 }
 
 void SkillNodesTable::selectNodeAndRow(int32_t row_id)
@@ -113,6 +118,8 @@ void SkillNodesTable::selectNodeAndRow(int32_t row_id)
         // Reset selection
         _selected_node_id = -1;
         _scene->repaint();
+
+        _data_modified = true;
     }
     // Select new node (or unselect it if -1)
     else {
@@ -152,21 +159,25 @@ void SkillNodesTable::setNodeRowCoord(int32_t row_id, uint32_t x, uint32_t y)
     QStandardItem* item = _model->item(row_id, PositionX);
     if (item) {
         item->setData(QVariant(x), Qt::DisplayRole);
+        _data_modified = true;
     }
     item = _model->item(row_id, PositionY);
     if (item) {
         item->setData(QVariant(y), Qt::DisplayRole);
+        _data_modified = true;
     }
 }
 
 void SkillNodesTable::onDataChanged()
 {
     _scene->repaint();
+    _data_modified = true;
 }
 
 void SkillNodesTable::onRowsremoved()
 {
     _scene->repaint();
+    _data_modified = true;
 }
 
 void SkillNodesTable::clicked(const QModelIndex& index)
@@ -187,6 +198,7 @@ void SkillNodesTable::clicked(const QModelIndex& index)
             // Set data back in the common ones
             const NodeData& node_data = data_dialog.getData();
             _model->updateNodeData(node_id, node_data);
+            _data_modified = true;
         }
         break;
     }

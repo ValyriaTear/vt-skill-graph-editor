@@ -13,6 +13,7 @@
 #include "graph_scene.h"
 #include "lua_writer.h"
 
+#include <QApplication>
 #include <QResizeEvent>
 #include <QSplitter>
 #include <QPushButton>
@@ -34,7 +35,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _nodes_table(nullptr),
     _graph_scene(nullptr),
     _settings(nullptr),
-    _toggle_grid_action(nullptr)
+    _toggle_grid_action(nullptr),
+    _save_action(nullptr)
 {
     setupMainView();
 
@@ -43,19 +45,24 @@ MainWindow::MainWindow(QWidget* parent) :
     QMenu* file_menu = menuBar()->addMenu(tr("&File"));
     QAction* new_action = file_menu->addAction(QString(tr("&New")));
     new_action->setEnabled(false);
-    QAction* open_action = file_menu->addAction(QString(tr("&Open")));
+    QAction* open_action = file_menu->addAction(QString(tr("&Open ...")));
     open_action->setEnabled(false);
-    QAction* save_action = file_menu->addAction(QString(tr("&Save")));
-    save_action->setEnabled(false);
-    QAction* save_as_action = file_menu->addAction(QString(tr("Save &as")));
+    _save_action = file_menu->addAction(QString(tr("&Save")));
+    _save_action->setEnabled(false);
+    _save_action->setShortcut(tr("Ctrl+S"));
+    QAction* save_as_action = file_menu->addAction(QString(tr("Save &as ...")));
     file_menu->addSeparator();
-    QAction* set_game_folder = file_menu->addAction(QString(tr("Set &Game folder")));
+    QAction* set_game_folder = file_menu->addAction(QString(tr("Set &Game folder ...")));
     file_menu->addSeparator();
     QAction* quit_action = file_menu->addAction(QString(tr("&Quit")));
 
+    connect(_save_action, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(save_as_action, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(set_game_folder, SIGNAL(triggered()), this, SLOT(fileSetGameFolder()));
-    connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
+    connect(quit_action, SIGNAL(triggered()), this, SLOT(fileQuit()));
+
+    // One cannot save until a valid file is set
+    _save_action->setEnabled(false);
 
     // View Menu
     QMenu* view_menu = menuBar()->addMenu(tr("&View"));
@@ -160,6 +167,16 @@ void MainWindow::removeNodeRow()
     }
 }
 
+bool MainWindow::fileSave()
+{
+    QFile file(_saved_graph_filepath);
+    if (_saved_graph_filepath.isEmpty() || !file.exists()) {
+        return fileSaveAs();
+    }
+
+    return save(_saved_graph_filepath);
+}
+
 bool MainWindow::fileSaveAs()
 {
     QString file_path = QFileDialog::getSaveFileName(this,
@@ -167,17 +184,33 @@ bool MainWindow::fileSaveAs()
                                                      _game_data_folder_path,
                                                      tr("Lua file (*.lua)"));
 
-    // Wasn't saved, but nothing abnormal
+    // Wasn't saved
     if (file_path.isEmpty())
-        return true;
+        return false;
 
+    return save(file_path);
+}
+
+bool MainWindow::save(const QString& file_path)
+{
     // Actually save the file now we have its location.
     const NodeModel* node_model = _nodes_table->getData();
     if (!node_model)
         return false;
 
     LuaWriter writer;
-    return writer.save(file_path, *node_model);
+    bool ret = writer.save(file_path, *node_model);
+
+    // Save was successful
+    if (ret) {
+        _saved_graph_filepath = file_path;
+        _save_action->setEnabled(true);
+        _nodes_table->dataSaved();
+        setWindowTitle(tr("Skill Graph Editor - %1").arg(_saved_graph_filepath));
+        statusBar()->showMessage(tr("Graph saved to: %1").arg(_saved_graph_filepath), 5000);
+    }
+
+    return ret;
 }
 
 void MainWindow::fileSetGameFolder()
@@ -194,6 +227,38 @@ void MainWindow::fileSetGameFolder()
     _game_data_folder_path = file_path;
     // Set this in the settings.
     _settings->setValue("GameDataPath", _game_data_folder_path);
+}
+
+void MainWindow::fileQuit()
+{
+    if (!_nodes_table->isDataModified()) {
+        qApp->exit(0); // Used to override close events.
+        return; // Should be useless, but still ...
+    }
+
+    int32_t ret = QMessageBox::warning(this, tr("Quit Editor - Unsaved changes"),
+                                       tr("Some modifications have not been saved.\nWould you like to save them?"),
+                                       QMessageBox::Save | QMessageBox::Close | QMessageBox::Cancel);
+
+    switch (ret) {
+    case QMessageBox::Close:
+        qApp->exit(0); // Used to override close events.
+        break;
+    case QMessageBox::Save:
+        if (fileSave()) {
+            qApp->exit(0); // Used to override close events.
+        }
+        break;
+    case QMessageBox::Cancel:
+    default:
+        break;
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    event->ignore();
+    fileQuit();
 }
 
 void MainWindow::viewToggleGrid()

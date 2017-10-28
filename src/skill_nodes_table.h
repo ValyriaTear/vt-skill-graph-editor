@@ -78,6 +78,17 @@ public:
         return _model;
     }
 
+    //! \brief Tells whether the data has been modified.
+    bool isDataModified() const {
+        return _data_modified;
+    }
+
+    //! \brief Tells the data is saved
+    //! and is not considered modified anymore
+    void dataSaved() {
+        _data_modified = false;
+    }
+
 private slots:
     //! \brief Triggered when data is changed in the table view
     void onDataChanged();
@@ -94,6 +105,9 @@ private:
 
     //! \brief The currently selected node id, or -1 if none.
     int32_t _selected_node_id;
+
+    //! \brief Stores whether the data are modified since latest save.
+    bool _data_modified;
 
     //! \brief Data model which contains the actual data
     NodeModel* _model;
