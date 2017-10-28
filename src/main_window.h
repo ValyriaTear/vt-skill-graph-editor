@@ -17,6 +17,7 @@ class GraphScene;
 
 class QSplitter;
 class QGraphicsView;
+class QSettings;
 
 //! \brief Main app window
 class MainWindow : public QMainWindow
@@ -34,9 +35,21 @@ private slots:
     //! \brief When Remove button is clicked
     void removeNodeRow();
 
-    //! \brief Save the nodes data
+    //! \brief Set the main game data/ absolute path.
+    void fileSetGameFolder();
+
+    //! \brief Save the nodes data in a new file
     //! \returns whether the save was successful
-    bool saveData();
+    bool fileSaveAs();
+
+    //! \brief Toggles whether the grid should be drawn
+    void viewToggleGrid();
+
+    //! \brief Provides some info about the editor
+    void helpAboutEditor();
+
+    //! \brief Provides some info about Qt
+    void helpAboutQt();
 
 private:
     //! \brief Setup main view widgets. Called once at init.
@@ -50,6 +63,16 @@ private:
 
     //! \brief Graph view handler
     GraphScene* _graph_scene;
+
+    //! \brief The application settings handler
+    QSettings* _settings;
+
+    //! \brief Valyria data/ absolute path
+    //! Used to compute proper relative paths
+    QString _game_data_folder_path;
+
+    //! \brief Main window actions references, don't delete them
+    QAction* _toggle_grid_action;
 };
 
 #endif // MAIN_WINDOW_H

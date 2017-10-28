@@ -27,6 +27,12 @@ public:
     //! \brief Repaint the whole scene from scratch
     void repaint();
 
+    //! \brief set whether the grid will have to drawn
+    void setGridEnabled(bool enabled) {
+        _draw_grid = enabled;
+        repaint();
+    }
+
 protected:
     //! \brief Mouse press handling
     void mousePressEvent(QGraphicsSceneMouseEvent* evt);
@@ -46,6 +52,9 @@ private:
     //! \brief The skill nodes handler.
     //! Handled by main window, don't delete it.
     SkillNodesTable* _node_handler;
+
+    //! \brief Whether to draw th grid
+    bool _draw_grid;
 };
 
 #endif // GRAPH_SCENE_H

@@ -20,6 +20,9 @@
 #include <QGraphicsView>
 #include <QToolBar>
 #include <QFileDialog>
+#include <QSettings>
+#include <QStatusBar>
+#include <QMessageBox>
 
 const int32_t MainWinWidth = 800;
 const int32_t MainWinHeight = 800;
@@ -29,17 +32,58 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _view_splitter(nullptr),
     _nodes_table(nullptr),
-    _graph_scene(nullptr)
+    _graph_scene(nullptr),
+    _settings(nullptr),
+    _toggle_grid_action(nullptr)
 {
     setupMainView();
 
-    // TODO: Add real menus on need (open, save, ...)
+    // File menu
+    // TODO: Finish missing actions
     QMenu* file_menu = menuBar()->addMenu(tr("&File"));
+    QAction* new_action = file_menu->addAction(QString(tr("&New")));
+    new_action->setEnabled(false);
+    QAction* open_action = file_menu->addAction(QString(tr("&Open")));
+    open_action->setEnabled(false);
     QAction* save_action = file_menu->addAction(QString(tr("&Save")));
+    save_action->setEnabled(false);
+    QAction* save_as_action = file_menu->addAction(QString(tr("Save &as")));
+    file_menu->addSeparator();
+    QAction* set_game_folder = file_menu->addAction(QString(tr("Set &Game folder")));
+    file_menu->addSeparator();
     QAction* quit_action = file_menu->addAction(QString(tr("&Quit")));
 
-    connect(save_action, SIGNAL(triggered()), this, SLOT(saveData()));
+    connect(save_as_action, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    connect(set_game_folder, SIGNAL(triggered()), this, SLOT(fileSetGameFolder()));
     connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
+
+    // View Menu
+    QMenu* view_menu = menuBar()->addMenu(tr("&View"));
+    _toggle_grid_action = new QAction("&Grid", this);
+    _toggle_grid_action->setStatusTip("Toggles the grid");
+    _toggle_grid_action->setShortcut(tr("G"));
+    _toggle_grid_action->setCheckable(true);
+    _toggle_grid_action->setChecked(true);
+    view_menu->addAction(_toggle_grid_action);
+
+    connect(_toggle_grid_action, SIGNAL(triggered()), this, SLOT(viewToggleGrid()));
+
+    // Help menu
+    QMenu* help_menu = menuBar()->addMenu("&Help");
+    QAction* about_action = help_menu->addAction(QString(tr("&About Editor")));
+    QAction* about_qt_action = help_menu->addAction(QString(tr("About &Qt")));
+
+    connect(about_action, SIGNAL(triggered()), this, SLOT(helpAboutEditor()));
+    connect(about_qt_action, SIGNAL(triggered()), this, SLOT(helpAboutQt()));
+
+    // Load settings
+    _settings = new QSettings("ValyriaTear", "VT-SkillGraphEditor");
+    _game_data_folder_path = _settings->value("GameDataPath").toString();
+
+    // Test the current game data existence and empty it if not valid anymore.
+    QDir dataDir(_game_data_folder_path);
+    if (!dataDir.exists())
+        _game_data_folder_path.clear();
 }
 
 MainWindow::~MainWindow()
@@ -47,6 +91,7 @@ MainWindow::~MainWindow()
     // delete owned widgets
     delete _view_splitter;
     delete _graph_scene;
+    delete _settings;
 }
 
 void MainWindow::setupMainView()
@@ -95,6 +140,8 @@ void MainWindow::setupMainView()
 
     // Init scene
     _graph_scene->repaint();
+
+    statusBar()->showMessage(tr("Ready!"), 5000);
 }
 
 void MainWindow::appendNodeRow()
@@ -113,11 +160,11 @@ void MainWindow::removeNodeRow()
     }
 }
 
-bool MainWindow::saveData()
+bool MainWindow::fileSaveAs()
 {
     QString file_path = QFileDialog::getSaveFileName(this,
                                                      tr("Save Data as ..."),
-                                                     QString(),
+                                                     _game_data_folder_path,
                                                      tr("Lua file (*.lua)"));
 
     // Wasn't saved, but nothing abnormal
@@ -131,4 +178,41 @@ bool MainWindow::saveData()
 
     LuaWriter writer;
     return writer.save(file_path, *node_model);
+}
+
+void MainWindow::fileSetGameFolder()
+{
+    QString file_path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Skill Graph Editor -- Set Game data/ folder"),
+                                                         _game_data_folder_path);
+
+    if(file_path.isEmpty()) {
+        statusBar()->showMessage(tr("Game data/ path not set"), 5000);
+        return;
+    }
+    statusBar()->showMessage(tr("Game data/ path set to: %1").arg(file_path), 5000);
+    _game_data_folder_path = file_path;
+    // Set this in the settings.
+    _settings->setValue("GameDataPath", _game_data_folder_path);
+}
+
+void MainWindow::viewToggleGrid()
+{
+    bool grid_enabled = _toggle_grid_action->isChecked();
+    _toggle_grid_action->setChecked(grid_enabled);
+    _graph_scene->setGridEnabled(grid_enabled);
+}
+
+void MainWindow::helpAboutEditor()
+{
+    QMessageBox::about(this, tr("Skill Graph Editor -- About"),
+                       tr("<center><h2>Skill Graph Editor"
+                          "</h2></center>"
+                          "<center><h3>Copyright &copy; 2017<font></h3></center>"
+                          "<p>A skill graph editor created for Valyria Tear. "));
+}
+
+void MainWindow::helpAboutQt()
+{
+    QMessageBox::aboutQt(this, tr("Skill Graph Editor -- About Qt"));
 }

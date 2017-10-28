@@ -28,7 +28,8 @@ const QColor text_color = QColor(255, 255, 255, 255);
 
 GraphScene::GraphScene(QGraphicsView* view, SkillNodesTable* node_handler):
     _view(view),
-    _node_handler(node_handler)
+    _node_handler(node_handler),
+    _draw_grid(true)
 {
     // Register the scene to other components
     _view->setScene(this);
@@ -112,29 +113,31 @@ void GraphScene::repaint()
 {
     clear();
 
-    // Grid rows headers
-    QGraphicsTextItem* text = addText(QString("X ->"));
-    text->moveBy(20, 20);
-    text->setDefaultTextColor(text_color);
-    text = addText(QString("Y\n|\nv"));
-    text->moveBy(20, 40);
-    text->setDefaultTextColor(text_color);
-
-    // Add the vertical lines first, paint them red
-    for (size_t x = 0; x <= SCENE_SIZE; x += GRID_SIZE) {
-        addLine(x, 0, x, SCENE_SIZE, QPen(Qt::white));
-        QGraphicsTextItem* text = addText(QString::number(x));
-        text->moveBy(x, 0);
+    if (_draw_grid) {
+        // Grid rows headers
+        QGraphicsTextItem* text = addText(QString("X ->"));
+        text->moveBy(20, 20);
         text->setDefaultTextColor(text_color);
-    }
+        text = addText(QString("Y\n|\nv"));
+        text->moveBy(20, 40);
+        text->setDefaultTextColor(text_color);
 
-    // Now add the horizontal lines, paint them green
-    for (size_t y = 0; y <= SCENE_SIZE; y += GRID_SIZE) {
-        addLine(0, y, SCENE_SIZE, y, QPen(Qt::white));
-        if (y > 0) {
-            QGraphicsTextItem* text = addText(QString::number(y));
-            text->moveBy(2, y);
+        // Add the vertical lines first, paint them red
+        for (size_t x = 0; x <= SCENE_SIZE; x += GRID_SIZE) {
+            addLine(x, 0, x, SCENE_SIZE, QPen(Qt::white));
+            QGraphicsTextItem* text = addText(QString::number(x));
+            text->moveBy(x, 0);
             text->setDefaultTextColor(text_color);
+        }
+
+        // Now add the horizontal lines, paint them green
+        for (size_t y = 0; y <= SCENE_SIZE; y += GRID_SIZE) {
+            addLine(0, y, SCENE_SIZE, y, QPen(Qt::white));
+            if (y > 0) {
+                QGraphicsTextItem* text = addText(QString::number(y));
+                text->moveBy(2, y);
+                text->setDefaultTextColor(text_color);
+            }
         }
     }
 
