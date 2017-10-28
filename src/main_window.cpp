@@ -35,8 +35,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _nodes_table(nullptr),
     _graph_scene(nullptr),
     _settings(nullptr),
-    _toggle_grid_action(nullptr),
-    _save_action(nullptr)
+    _save_action(nullptr),
+    _toggle_grid_action(nullptr)
 {
     setupMainView();
 
@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget* parent) :
     // TODO: Finish missing actions
     QMenu* file_menu = menuBar()->addMenu(tr("&File"));
     QAction* new_action = file_menu->addAction(QString(tr("&New")));
-    new_action->setEnabled(false);
+    new_action->setShortcut(tr("Ctrl+N"));
     QAction* open_action = file_menu->addAction(QString(tr("&Open ...")));
     open_action->setEnabled(false);
     _save_action = file_menu->addAction(QString(tr("&Save")));
@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent) :
     file_menu->addSeparator();
     QAction* quit_action = file_menu->addAction(QString(tr("&Quit")));
 
+    connect(new_action, SIGNAL(triggered()), this, SLOT(fileNew()));
     connect(_save_action, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(save_as_action, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(set_game_folder, SIGNAL(triggered()), this, SLOT(fileSetGameFolder()));
@@ -164,6 +165,35 @@ void MainWindow::removeNodeRow()
     {
         QModelIndex index = index_list.at(i);
         _nodes_table->removeNodeRow(index.row());
+    }
+}
+
+void MainWindow::fileNew()
+{
+    if (!_nodes_table->isDataModified()) {
+        _nodes_table->clearData();
+        statusBar()->showMessage(tr("Data cleared (No unsaved data)"), 5000);
+        return;
+    }
+
+    int32_t ret = QMessageBox::warning(this, tr("New file - Unsaved changes"),
+                                       tr("Some modifications have not been saved.\nWould you like to save them?"),
+                                       QMessageBox::Save | QMessageBox::Ignore | QMessageBox::Cancel);
+
+    switch (ret) {
+    case QMessageBox::Ignore:
+        _nodes_table->clearData();
+        statusBar()->showMessage(tr("Data cleared (Unsaved data ignored)"), 5000);
+        break;
+    case QMessageBox::Save:
+        if (fileSave()) {
+            _nodes_table->clearData();
+            statusBar()->showMessage(tr("Data cleared (Data saved)"), 5000);
+        }
+        break;
+    case QMessageBox::Cancel:
+    default:
+        break;
     }
 }
 

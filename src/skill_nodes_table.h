@@ -89,6 +89,9 @@ public:
         _data_modified = false;
     }
 
+    //! \brief Clear all data
+    void clearData();
+
 private slots:
     //! \brief Triggered when data is changed in the table view
     void onDataChanged();

@@ -47,6 +47,13 @@ void SkillNodesTable::setupSkillNodesTableView()
     show();
 }
 
+void SkillNodesTable::clearData()
+{
+    setupSkillNodesTableView();
+    _scene->repaint();
+    _data_modified = false;
+}
+
 int32_t SkillNodesTable::appendNodeRow(uint32_t x,
                                        uint32_t y,
                                        uint32_t xp_cost)

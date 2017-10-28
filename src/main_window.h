@@ -39,6 +39,9 @@ private slots:
     //! \brief When Remove button is clicked
     void removeNodeRow();
 
+    //! \brief Clear out data
+    void fileNew();
+
     //! \brief Save graph to the current file, if any.
     //! Triggers save as, otherwise.
     bool fileSave();
@@ -90,8 +93,8 @@ private:
     QString _saved_graph_filepath;
 
     //! \brief Main window actions references, don't delete them
-    QAction* _toggle_grid_action;
     QAction* _save_action;
+    QAction* _toggle_grid_action;
 };
 
 #endif // MAIN_WINDOW_H
