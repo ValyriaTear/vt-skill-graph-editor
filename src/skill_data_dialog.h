@@ -128,12 +128,12 @@ public:
     //! \brief Gets updated filename from dialog
     void getData(QString& icon_filename, int32_t& skill_id) const;
 
-private:
-    //! \brief Icon filename
-    QString _icon_filename;
+private slots:
+    //! \brief Browse for the node icon filename
+    void browseIconFilename();
 
+private:
     //! \brief The line edit control references. Do not delete them.
-    QLabel* _filename_title;
     QLineEdit* _filename_edit;
     QLabel* _skill_id_title;
     QLineEdit* _skill_id_edit;

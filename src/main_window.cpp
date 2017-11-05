@@ -29,6 +29,9 @@ const int32_t MainWinWidth = 800;
 const int32_t MainWinHeight = 800;
 const int32_t NodeTableWidth = 425;
 
+//! \brief Simple extern used to pass the main window around
+MainWindow* main_win = nullptr;
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _view_splitter(nullptr),
@@ -38,10 +41,13 @@ MainWindow::MainWindow(QWidget* parent) :
     _save_action(nullptr),
     _toggle_grid_action(nullptr)
 {
+    // Init the extern
+    main_win = this;
+
     setupMainView();
 
     // File menu
-    // TODO: Finish missing actions
+    // TODO: Add support for open action
     QMenu* file_menu = menuBar()->addMenu(tr("&File"));
     QAction* new_action = file_menu->addAction(QString(tr("&New")));
     new_action->setShortcut(tr("Ctrl+N"));

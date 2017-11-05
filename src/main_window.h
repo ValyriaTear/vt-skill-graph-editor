@@ -28,6 +28,11 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
+    //! \brief Provides the current game data path
+    const QString& getGameDataPath() const {
+        return _game_data_folder_path;
+    }
+
 protected:
     //! \brief Handles close and/or quit events.
     void closeEvent(QCloseEvent* event);
@@ -96,5 +101,8 @@ private:
     QAction* _save_action;
     QAction* _toggle_grid_action;
 };
+
+//! \brief Used to be able to access the main window from elsewhere
+extern MainWindow* main_win;
 
 #endif // MAIN_WINDOW_H

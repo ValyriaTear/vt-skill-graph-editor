@@ -9,6 +9,8 @@
 
 #include "skill_data_dialog.h"
 
+#include "main_window.h"
+
 #include <QTableView>
 
 #include <QDialogButtonBox>
@@ -17,6 +19,11 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QLabel>
+#include <QGroupBox>
+#include <QFileDialog>
+
+// Obtain the main window reference
+extern MainWindow* main_win;
 
 SkillDataDialog::SkillDataDialog(const QString& node_id, QWidget* parent):
     QDialog(parent),
@@ -262,7 +269,6 @@ SkillData StatsTab::getData() const
 
 IconFileTab::IconFileTab(QWidget* parent)
     : QWidget(parent),
-      _filename_title(new QLabel(tr("Icon Filename:"), this)),
       _filename_edit(new QLineEdit(this)),
       _skill_id_title(new QLabel(tr("Skill Id Learned (-1 <-> 65000):"), this)),
       _skill_id_edit(new QLineEdit(this))
@@ -270,14 +276,56 @@ IconFileTab::IconFileTab(QWidget* parent)
     // Permit number only in skill id edit control
     _skill_id_edit->setValidator(new QIntValidator(-1, 65000, this));
 
+    // Add browse button
+    QPushButton* browse_button = new QPushButton(tr("Browse ..."));
+    connect(browse_button, SIGNAL(clicked(bool)), this, SLOT(browseIconFilename()));
+
+    QGroupBox* fileGroupBox = new QGroupBox(tr("Icon filename"));
+    QHBoxLayout* h_layout = new QHBoxLayout();
+    h_layout->addWidget(_filename_edit);
+    h_layout->addWidget(browse_button);
+    fileGroupBox->setLayout(h_layout);
+
     QVBoxLayout* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(_filename_title);
-    mainLayout->addWidget(_filename_edit);
+    mainLayout->addWidget(fileGroupBox);
     mainLayout->addWidget(_skill_id_title);
     mainLayout->addWidget(_skill_id_edit);
     mainLayout->addStretch(1);
 
     setLayout(mainLayout);
+}
+
+void IconFileTab::browseIconFilename()
+{
+    QString game_data_path = main_win->getGameDataPath();
+
+    // Construct the full filename if it exist and looks relative and we have a game data setting:
+    QString current_file = _filename_edit->text();
+    if (!current_file.isEmpty()
+            && current_file.startsWith("data")
+            && !game_data_path.isEmpty()) {
+        current_file = game_data_path.split("data").at(0) + current_file;
+    }
+
+    QString starting_path = current_file.isEmpty() ? game_data_path : current_file;
+
+    QString file_path = QFileDialog::getOpenFileName(this,
+                                                     tr("Select Icon Filename"),
+                                                     starting_path,
+                                                     tr("Lua file (*.lua)"));
+
+    if (file_path.isEmpty())
+        return;
+
+    // Construct the relative path
+    QStringList path_split = file_path.split("data");
+    // if data/ is found at least once, means two text parts
+    if (path_split.size() > 1) {
+        // Get the relative part of the path
+        file_path = "data" + path_split.at(path_split.size() - 1);
+    }
+
+    _filename_edit->setText(file_path);
 }
 
 void IconFileTab::loadData(const QString& icon_filename, int32_t skill_id)
