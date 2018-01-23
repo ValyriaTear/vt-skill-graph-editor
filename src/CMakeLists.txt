@@ -216,13 +216,7 @@ skill_nodes_table.h
 skill_data_dialog.h
 node_data.h
 lua_writer.h
-graph_scene.h
-lua_writer.h
-main_window.h
-node_data.h
-node_model.h
-skill_data_dialog.h
-skill_nodes_table.h
+lua_reader.h
 )
 
 SET(SRCS_EDITOR
@@ -232,14 +226,9 @@ graph_scene.cpp
 node_model.cpp
 skill_nodes_table.cpp
 skill_data_dialog.cpp
-lua_writer.cpp
 graph_scene.cpp
 lua_writer.cpp
-main.cpp
-main_window.cpp
-node_model.cpp
-skill_data_dialog.cpp
-skill_nodes_table.cpp
+lua_reader.cpp
 )
 
 QT5_WRAP_CPP(EDITOR_QT_HEADERS_MOC ${EDITOR_QT_HEADERS})

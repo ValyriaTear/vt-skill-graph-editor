@@ -10,7 +10,6 @@
 #include "lua_writer.h"
 
 #include <QFile>
-#include <QMessageBox>
 #include <QTextStream>
 
 const QString Description(

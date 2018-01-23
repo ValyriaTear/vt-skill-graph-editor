@@ -26,6 +26,7 @@ using SkillData = std::vector<DataPair>;
 //! \brief One node specific data
 struct NodeData {
     NodeData():
+        node_id(-1),
         skill_id(-1)
     {}
 
