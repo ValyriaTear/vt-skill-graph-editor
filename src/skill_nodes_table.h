@@ -78,6 +78,11 @@ public:
         return _model;
     }
 
+    //! \brief Returns the table view data for writing
+    NodeModel* getDataForOverride() const {
+        return _model;
+    }
+
     //! \brief Tells whether the data has been modified.
     bool isDataModified() const {
         return _data_modified;
@@ -103,9 +108,6 @@ private slots:
     void clicked(const QModelIndex& index);
 
 private:
-    //! \brief Set the table item data format
-    void setRowFormat(int32_t row);
-
     //! \brief The currently selected node id, or -1 if none.
     int32_t _selected_node_id;
 

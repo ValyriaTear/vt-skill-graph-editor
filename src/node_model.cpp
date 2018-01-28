@@ -143,6 +143,7 @@ void NodeModel::updateNodeData(int32_t node_id,
         node_data.items_data = updated_data.items_data;
         node_data.icon_filename = updated_data.icon_filename;
         node_data.skill_id = updated_data.skill_id;
+        node_data.node_links = updated_data.node_links;
     }
     // Adds the data if it was never added before
     if (!node_found) {
@@ -153,5 +154,48 @@ void NodeModel::updateNodeData(int32_t node_id,
         node_data.items_data = updated_data.items_data;
         node_data.icon_filename = updated_data.icon_filename;
         node_data.skill_id = updated_data.skill_id;
+        node_data.node_links = updated_data.node_links;
     }
+}
+
+void NodeModel::setRowFormat(int32_t row)
+{
+    for (uint32_t i = 0; i < NodesTableIds::ColumnsNumber; ++i) {
+        switch(i) {
+            // Nothing special
+            default:
+                continue;
+                break;
+            // Set the columns as non editable and with gray background
+            case NodesTableIds::Data: {
+                QStandardItem* item = this->item(row, i);
+                // If no item, create it first
+                if (!item) {
+                    item = new QStandardItem();
+                    setItem(row, i, item);
+                }
+                item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
+                item->setBackground(QBrush(QColor(125, 125, 125, 125)));
+                item->setData(QVariant(tr("Click to edit")), Qt::DisplayRole);
+            }
+        }
+    }
+}
+
+//! \brief Adds a new row on the model with given data
+//! \returns the node id/row id
+void NodeModel::newRow(uint32_t x_pos,
+                       uint32_t y_pos,
+                       uint32_t xp_cost,
+                       const NodeData& node_data)
+{
+    appendRow(QList<QStandardItem*>()
+              << new QStandardItem(QString::number(x_pos))
+              << new QStandardItem(QString::number(y_pos))
+              << new QStandardItem(QString::number(xp_cost)));
+
+    uint32_t row_id = rowCount() - 1;
+    setRowFormat(row_id);
+
+    updateNodeData(row_id, node_data);
 }

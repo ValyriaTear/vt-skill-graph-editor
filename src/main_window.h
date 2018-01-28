@@ -47,6 +47,9 @@ private slots:
     //! \brief Clear out data
     void fileNew();
 
+    //! \brief Opens a skill graph file and attempts to read its content
+    bool fileOpen();
+
     //! \brief Save graph to the current file, if any.
     //! Triggers save as, otherwise.
     bool fileSave();

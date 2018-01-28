@@ -11,7 +11,9 @@
 
 #include "skill_nodes_table.h"
 #include "graph_scene.h"
+#include "lua_reader.h"
 #include "lua_writer.h"
+#include "script/script.h"
 
 #include <QApplication>
 #include <QResizeEvent>
@@ -52,7 +54,7 @@ MainWindow::MainWindow(QWidget* parent) :
     QAction* new_action = file_menu->addAction(QString(tr("&New")));
     new_action->setShortcut(tr("Ctrl+N"));
     QAction* open_action = file_menu->addAction(QString(tr("&Open ...")));
-    open_action->setEnabled(false);
+    open_action->setShortcut(tr("Ctrl+O"));
     _save_action = file_menu->addAction(QString(tr("&Save")));
     _save_action->setEnabled(false);
     _save_action->setShortcut(tr("Ctrl+S"));
@@ -63,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent) :
     QAction* quit_action = file_menu->addAction(QString(tr("&Quit")));
 
     connect(new_action, SIGNAL(triggered()), this, SLOT(fileNew()));
+    connect(open_action, SIGNAL(triggered()), this, SLOT(fileOpen()));
     connect(_save_action, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(save_as_action, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(set_game_folder, SIGNAL(triggered()), this, SLOT(fileSetGameFolder()));
@@ -98,6 +101,10 @@ MainWindow::MainWindow(QWidget* parent) :
     QDir dataDir(_game_data_folder_path);
     if (!dataDir.exists())
         _game_data_folder_path.clear();
+
+    // Initialize the script manager
+    vt_script::ScriptManager = vt_script::ScriptEngine::SingletonCreate();
+    vt_script::ScriptManager->SingletonInitialize();
 }
 
 MainWindow::~MainWindow()
@@ -106,6 +113,9 @@ MainWindow::~MainWindow()
     delete _view_splitter;
     delete _graph_scene;
     delete _settings;
+
+    // Deinit the script manager
+    vt_script::ScriptEngine::SingletonDestroy();
 }
 
 void MainWindow::setupMainView()
@@ -201,6 +211,67 @@ void MainWindow::fileNew()
     default:
         break;
     }
+}
+
+bool MainWindow::fileOpen()
+{
+    // Check for unsaved data first
+    if (_nodes_table->isDataModified()) {
+        int32_t ret = QMessageBox::warning(this, tr("Open file - Unsaved changes"),
+                                           tr("Some modifications have not been saved.\nWould you like to save them?"),
+                                           QMessageBox::Save | QMessageBox::Ignore | QMessageBox::Cancel);
+
+        switch (ret) {
+        case QMessageBox::Ignore:
+            _nodes_table->clearData();
+            statusBar()->showMessage(tr("Data cleared (Unsaved data ignored)"), 5000);
+            break;
+        case QMessageBox::Save:
+            if (fileSave()) {
+                _nodes_table->clearData();
+                statusBar()->showMessage(tr("Data cleared (Data saved)"), 5000);
+            }
+            break;
+        case QMessageBox::Cancel:
+        default:
+            break;
+        }
+    }
+
+    // Select the file to open
+    QString file_path = QFileDialog::getOpenFileName(this,
+                                                     tr("Open File ..."),
+                                                     _game_data_folder_path,
+                                                     tr("Lua file (*.lua)"));
+    // Wasn't selected
+    if (file_path.isEmpty())
+        return false;
+
+    // Get the data model
+    NodeModel* node_model = _nodes_table->getDataForOverride();
+    if (!node_model)
+        return false;
+
+    // Attempt to open and read the file
+    LuaReader lua_reader;
+    bool ret = lua_reader.readFile(file_path, *node_model);
+
+    // Open was successful
+    if (ret) {
+        _saved_graph_filepath = file_path;
+        _save_action->setEnabled(true);
+        _nodes_table->dataSaved();
+        _nodes_table->clearSelectedNodeId();
+        setWindowTitle(tr("Skill Graph Editor - %1").arg(_saved_graph_filepath));
+        statusBar()->showMessage(tr("Graph open with: %1").arg(_saved_graph_filepath), 5000);
+    }
+    else {
+        statusBar()->showMessage(tr("Graph file couldn't be opened: %1").arg(file_path), 5000);
+        return false;
+    }
+
+    _graph_scene->repaint();
+    return true;
 }
 
 bool MainWindow::fileSave()

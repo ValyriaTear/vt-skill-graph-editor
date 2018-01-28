@@ -52,6 +52,7 @@ void SkillNodesTable::clearData()
     setupSkillNodesTableView();
     _scene->repaint();
     _data_modified = false;
+    _selected_node_id = -1;
 }
 
 int32_t SkillNodesTable::appendNodeRow(uint32_t x,
@@ -64,35 +65,11 @@ int32_t SkillNodesTable::appendNodeRow(uint32_t x,
                       << new QStandardItem(QString::number(y))
                       << new QStandardItem(QString::number(xp_cost)));
 
-    setRowFormat(_model->rowCount() - 1);
+    _model->setRowFormat(_model->rowCount() - 1);
 
     _data_modified = true;
 
     return _model->rowCount();
-}
-
-void SkillNodesTable::setRowFormat(int32_t row)
-{
-    for (uint32_t i = 0; i < NodesTableIds::ColumnsNumber; ++i) {
-        switch(i) {
-            // Nothing special
-            default:
-                continue;
-                break;
-            // Set the columns as non editable and with gray background
-            case NodesTableIds::Data: {
-                QStandardItem* item = _model->item(row, i);
-                // If no item, create it first
-                if (!item) {
-                    item = new QStandardItem();
-                    _model->setItem(row, i, item);
-                }
-                item->setFlags(item->flags() &  ~Qt::ItemIsEditable);
-                item->setBackground(QBrush(QColor(125, 125, 125, 125)));
-                item->setData(QVariant(tr("Click to edit")), Qt::DisplayRole);
-            }
-        }
-    }
 }
 
 void SkillNodesTable::removeNodeRow(int32_t row_id)

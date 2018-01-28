@@ -14,6 +14,8 @@
 
 #include <QStandardItemModel>
 
+class LuaReader;
+
 //! \brief the nodes table view column ids
 enum NodesTableIds : int32_t {
     PositionX = 0,
@@ -36,6 +38,8 @@ class NodeModel : public QStandardItemModel
 {
     Q_OBJECT
 
+    friend LuaReader;
+
 public:
     explicit NodeModel(QObject* parent = Q_NULLPTR);
     virtual ~NodeModel()
@@ -51,6 +55,26 @@ public:
 
     //! \brief Updates items, stats and other specific data for the given node
     void updateNodeData(int32_t node_id, const NodeData& node_data);
+
+    //! \brief Tells whether the node model has data
+    bool isEmpty() const {
+        return _nodes_data.empty();
+    }
+
+    //! \brief Set the table item data format
+    void setRowFormat(int32_t row);
+
+protected:
+    void clearData() {
+        removeRows(0, rowCount());
+        _nodes_data.clear();
+    }
+
+    //! \brief Adds a new row on the model with given data
+    void newRow(uint32_t x_pos,
+                uint32_t y_pos,
+                uint32_t xp_cost,
+                const NodeData& node_data);
 
 private slots:
     //! \brief Triggered for each changed items in the model

@@ -25,7 +25,7 @@ public:
 
     //! \brief Reads the data from the given
     //! and add it to the model data.
-    bool read_file(const QString& file_path, const NodeModel& node_model);
+    bool readFile(const QString& file_path, NodeModel& node_model);
 };
 
 #endif // LUA_READER_H

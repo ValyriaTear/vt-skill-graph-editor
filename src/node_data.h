@@ -17,7 +17,7 @@
 
 //! \brief Links between nodes
 //! vector of linked ids.
-using NodeLinksData = std::vector<int32_t>;
+using NodeLinksData = std::vector<uint32_t>;
 
 //! \brief Used for items and stats data
 using DataPair = std::pair<int32_t, int32_t>;
