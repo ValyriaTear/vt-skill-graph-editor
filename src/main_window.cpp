@@ -157,6 +157,12 @@ void MainWindow::setupMainView()
     connect(button, SIGNAL(clicked(bool)), this, SLOT(removeNodeRow()));
     node_btn_toolbar->addWidget(button);
 
+    button = new QPushButton(QString("Deselect Node"), node_btn_toolbar);
+    button->setFixedSize(120, 30);
+    button->setToolTip(tr("Deselect currently selected Node"));
+    connect(button, SIGNAL(clicked(bool)), this, SLOT(deselectNode()));
+    node_btn_toolbar->addWidget(button);
+
     table_splitter->addWidget(node_btn_toolbar);
 
     // Set main widgets sizes
@@ -182,6 +188,12 @@ void MainWindow::removeNodeRow()
         QModelIndex index = index_list.at(i);
         _nodes_table->removeNodeRow(index.row());
     }
+}
+
+void MainWindow::deselectNode()
+{
+    _nodes_table->clearSelectedNodeId();
+    _graph_scene->repaint();
 }
 
 void MainWindow::fileNew()

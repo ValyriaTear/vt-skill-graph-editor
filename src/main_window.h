@@ -44,6 +44,9 @@ private slots:
     //! \brief When Remove button is clicked
     void removeNodeRow();
 
+    //! \brief Deselect currently selected node
+    void deselectNode();
+
     //! \brief Clear out data
     void fileNew();
 
