@@ -1,0 +1,45 @@
+dist: trusty
+sudo: required
+
+language: cpp
+compiler:
+  - gcc
+  - clang
+cache: apt
+
+git:
+  submodules: false
+
+before_install:
+  # Add Qt5 support
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+ 
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq cppcheck
+  # for luabind
+  - sudo apt-get install -qq liblua5.1-0-dev libboost-all-dev
+  # Qt5
+  - sudo apt-get install -qq qtbase5-dev
+
+install:
+  # Clang is not system wide. This is a workaround.
+  - $CC --version
+  - which $CC
+  - export CC=`which $CC`
+
+script:
+  # Force the update of the submodule manually
+  - git submodule update --init --recursive --force --remote
+
+  - cmake -DCMAKE_CXX_COMPILER=$(which $CXX) .
+  - make -j2
+
+after_script:
+  - cppcheck --verbose --enable=all --quiet `git ls-files src/\*.h src/\*.cpp`
+
+notifications:
+  email:
+    recipients:
+      - yohann.ferreira@orange.fr
+    on_success: change
+    on_failure: always
