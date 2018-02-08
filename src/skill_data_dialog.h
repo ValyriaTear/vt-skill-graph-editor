@@ -40,6 +40,7 @@ public:
     void loadData(const NodeData& node_data);
 
     //! \brief Gets a copy of updated data from dialog
+    //! \warning The node data doesn't have links information for instance
     const NodeData getData() const;
 
 private:

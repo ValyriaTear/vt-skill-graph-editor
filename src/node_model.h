@@ -54,7 +54,7 @@ public:
     const NodeData& getNodeData(int32_t node_id) const;
 
     //! \brief Updates items, stats and other specific data for the given node
-    void updateNodeData(int32_t node_id, const NodeData& node_data);
+    void updateNodeData(int32_t node_id, const NodeData& node_data, bool update_links = true);
 
     //! \brief Tells whether the node model has data
     bool isEmpty() const {

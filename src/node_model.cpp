@@ -130,7 +130,8 @@ const NodeData& NodeModel::getNodeData(int32_t node_id) const
 }
 
 void NodeModel::updateNodeData(int32_t node_id,
-                               const NodeData& updated_data)
+                               const NodeData& updated_data,
+                               bool update_links)
 {
     bool node_found = false;
     for (NodeData& node_data : _nodes_data) {
@@ -143,7 +144,8 @@ void NodeModel::updateNodeData(int32_t node_id,
         node_data.items_data = updated_data.items_data;
         node_data.icon_filename = updated_data.icon_filename;
         node_data.skill_id = updated_data.skill_id;
-        node_data.node_links = updated_data.node_links;
+        if (update_links)
+            node_data.node_links = updated_data.node_links;
     }
     // Adds the data if it was never added before
     if (!node_found) {
@@ -154,7 +156,8 @@ void NodeModel::updateNodeData(int32_t node_id,
         node_data.items_data = updated_data.items_data;
         node_data.icon_filename = updated_data.icon_filename;
         node_data.skill_id = updated_data.skill_id;
-        node_data.node_links = updated_data.node_links;
+        if (update_links)
+            node_data.node_links = updated_data.node_links;
     }
 }
 

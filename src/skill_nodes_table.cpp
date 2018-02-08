@@ -181,7 +181,8 @@ void SkillNodesTable::clicked(const QModelIndex& index)
         if (data_dialog.exec()) {
             // Set data back in the common ones
             const NodeData& node_data = data_dialog.getData();
-            _model->updateNodeData(node_id, node_data);
+            // Update node data, but do not erase link data
+            _model->updateNodeData(node_id, node_data, false);
             _data_modified = true;
         }
         break;
