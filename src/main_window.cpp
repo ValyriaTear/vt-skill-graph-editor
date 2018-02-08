@@ -279,6 +279,9 @@ bool MainWindow::fileOpen()
     }
     else {
         statusBar()->showMessage(tr("Graph file couldn't be opened: %1").arg(file_path), 5000);
+        // Empty data
+        _nodes_table->clearData();
+        _graph_scene->repaint();
         return false;
     }
 

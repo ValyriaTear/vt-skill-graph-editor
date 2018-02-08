@@ -12,6 +12,7 @@
 #include "script/script_read.h"
 
 #include <algorithm>
+#include <QProgressDialog>
 
 bool LuaReader::readFile(const QString& file_path, NodeModel& node_model)
 {
@@ -31,11 +32,23 @@ bool LuaReader::readFile(const QString& file_path, NodeModel& node_model)
     // Read each node ids
     std::vector<int32_t> table_keys;
     script.ReadTableKeys(table_keys);
+
+    // Add loading indication to the user
+    QProgressDialog progress("Loading Nodes data...",
+                             "Abort Loading loading", 0,
+                             table_keys.size(), nullptr);
+    progress.setWindowModality(Qt::WindowModal);
+
     // Sort the node ids to prevent unsync of data
     std::sort(table_keys.begin(), table_keys.end());
 
     for (size_t i = 0; i < table_keys.size(); ++i) {
         int32_t node_id = table_keys[i];
+        progress.setValue(i);
+
+        if (progress.wasCanceled())
+              return false;
+
         if (!script.OpenTable(node_id))
             continue;
 
@@ -83,6 +96,8 @@ bool LuaReader::readFile(const QString& file_path, NodeModel& node_model)
         // node id table
         script.CloseTable();
     }
+    // Update the modal final value
+    progress.setValue(table_keys.size());
 
     // skill_graph table
     script.CloseTable();
