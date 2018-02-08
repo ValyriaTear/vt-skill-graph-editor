@@ -29,23 +29,7 @@ bool LuaWriter::save(const QString& file_path, const NodeModel& node_model)
     // Save the file
     QTextStream out(&file);
 
-    out << Description << endl;
-
-    // Writes the index name to be able to open the file
-    out << "BRONANN  = 1;" << endl
-        << "KALYA    = 2;" << endl
-        << "SYLVE    = 4;" << endl
-        << "THANIS   = 8;" << endl << endl;
-
-    // Write the starting node table
-    // TODO: Handle actual get/set starting position
-    out << "skill_graph_start = {" << endl
-        << "\t-- [Character id] = node id" << endl
-        << "\t[BRONANN] = 0," << endl
-        << "\t[KALYA] = 0," << endl
-        << "\t[SYLVE] = 0," << endl
-        << "\t[THANIS] = 0" << endl
-        << "}" << endl << endl;
+    out << Description << endl << endl;
 
     // Skill graph table
     out << "skill_graph = {"  << endl;
