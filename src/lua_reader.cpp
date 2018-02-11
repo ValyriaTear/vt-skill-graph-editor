@@ -35,7 +35,7 @@ bool LuaReader::readFile(const QString& file_path, NodeModel& node_model)
 
     // Add loading indication to the user
     QProgressDialog progress("Loading Nodes data...",
-                             "Abort Loading loading", 0,
+                             "Abort Loading", 0,
                              table_keys.size(), nullptr);
     progress.setWindowModality(Qt::WindowModal);
 
